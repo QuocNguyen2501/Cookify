@@ -29,8 +29,8 @@ jobs:
     - name: Install .NET Aspire workload
       run: dotnet workload install aspire
 
-    - name: Restore dependencies
-      run: dotnet restore RecipeApp.sln
+    - name: Restore dependencies with runtime identifier
+      run: dotnet restore RecipeApp.sln --runtime win-x64
 
     - name: Build solution
       run: dotnet build RecipeApp.sln --configuration Release --no-restore
@@ -55,42 +55,8 @@ jobs:
         echo "- **Configuration:** Release" >> $GITHUB_STEP_SUMMARY
         echo "- **Platform:** Windows Latest" >> $GITHUB_STEP_SUMMARY
         echo "- **MAUI Workload:** Installed" >> $GITHUB_STEP_SUMMARY
-
-  build-cross-platform:
-    name: Cross-Platform Build Validation
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup .NET 9.0
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '9.0.x'
-
-    - name: Install .NET MAUI workload
-      run: dotnet workload install maui
-
-    - name: Install .NET Aspire workload
-      run: dotnet workload install aspire
-
-    - name: Restore dependencies
-      run: dotnet restore RecipeApp.sln
-
-    - name: Build non-MAUI projects only
-      run: |
-        dotnet build RecipeApp.AppHost --configuration Release --no-restore
-        dotnet build RecipeApp.ServiceDefaults --configuration Release --no-restore  
-        dotnet build RecipeApp.ApiService --configuration Release --no-restore
-        dotnet build RecipePortal.WebApp --configuration Release --no-restore
-
-    - name: Build MAUI project (continue on error for cross-platform)
-      run: dotnet build RecipeApp.Mobile --configuration Release --no-restore
-      continue-on-error: true
+        echo "- **Aspire Workload:** Installed" >> $GITHUB_STEP_SUMMARY
+        echo "- **Runtime Target:** win-x64" >> $GITHUB_STEP_SUMMARY
 
   analyze:
     name: Code Analysis

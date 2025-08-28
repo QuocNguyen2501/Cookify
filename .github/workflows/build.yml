@@ -29,8 +29,8 @@ jobs:
     - name: Install .NET Aspire workload
       run: dotnet workload install aspire
 
-    - name: Restore dependencies with runtime identifier
-      run: dotnet restore RecipeApp.sln --runtime win-x64
+    - name: Restore dependencies
+      run: dotnet restore RecipeApp.sln
 
     - name: Build solution
       run: dotnet build RecipeApp.sln --configuration Release --no-restore
@@ -56,7 +56,6 @@ jobs:
         echo "- **Platform:** Windows Latest" >> $GITHUB_STEP_SUMMARY
         echo "- **MAUI Workload:** Installed" >> $GITHUB_STEP_SUMMARY
         echo "- **Aspire Workload:** Installed" >> $GITHUB_STEP_SUMMARY
-        echo "- **Runtime Target:** win-x64" >> $GITHUB_STEP_SUMMARY
 
   analyze:
     name: Code Analysis

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="RecipeApp.Mobile.RecipeDetailPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:RecipeApp.Mobile.Converters"
+             Title="{Binding Recipe.Name}">
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ImageFileNameToSourceConverter x:Key="ImageConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <StackLayout Padding="16" Spacing="16">
+            
+            <!-- Recipe Image -->
+            <Image Source="{Binding Recipe.ImageFileName, Converter={StaticResource ImageConverter}}"
+                   Aspect="AspectFill"
+                   HeightRequest="200"
+                   HorizontalOptions="FillAndExpand"
+                   BackgroundColor="LightGray" />
+
+            <!-- Recipe Name -->
+            <Label Text="{Binding Recipe.Name}"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="Black" />
+
+            <!-- Recipe Description -->
+            <Label Text="{Binding Recipe.Description}"
+                   FontSize="16"
+                   TextColor="Gray"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center" />
+
+            <!-- Cooking Time and Difficulty -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto" Margin="0,16,0,0">
+                <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                    <Label Text="🕒 Cooking Time" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label Text="{Binding Recipe.CookingTimeMinutes, StringFormat='{0} min'}" 
+                           FontSize="16" 
+                           HorizontalOptions="Center" />
+                </StackLayout>
+                
+                <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                    <Label Text="📊 Difficulty" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label Text="{Binding Recipe.DifficultyLevel}" 
+                           FontSize="16" 
+                           HorizontalOptions="Center" />
+                </StackLayout>
+            </Grid>
+
+            <!-- Ingredients Section -->
+            <Label Text="🥘 Ingredients" 
+                   FontSize="20" 
+                   FontAttributes="Bold" 
+                   Margin="0,24,0,8"
+                   TextColor="Black" />
+            
+            <CollectionView ItemsSource="{Binding Recipe.Ingredients}" 
+                          BackgroundColor="Transparent">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="Auto,*" 
+                              Padding="8" 
+                              RowSpacing="4">
+                            <Ellipse Grid.Column="0" 
+                                   WidthRequest="8" 
+                                   HeightRequest="8" 
+                                   Fill="Gray" 
+                                   VerticalOptions="Center" 
+                                   Margin="0,0,12,0" />
+                            <Label Grid.Column="1" 
+                                 Text="{Binding .}" 
+                                 FontSize="16" 
+                                 VerticalOptions="Center"
+                                 TextColor="Black" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Instructions Section -->
+            <Label Text="📝 Instructions" 
+                   FontSize="20" 
+                   FontAttributes="Bold" 
+                   Margin="0,24,0,8"
+                   TextColor="Black" />
+            
+            <CollectionView ItemsSource="{Binding InstructionsWithNumbers}" 
+                          BackgroundColor="Transparent">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="Auto,*" 
+                              Padding="8,12" 
+                              RowSpacing="4">
+                            <Frame Grid.Column="0" 
+                                 WidthRequest="24" 
+                                 HeightRequest="24" 
+                                 CornerRadius="12" 
+                                 BackgroundColor="DodgerBlue" 
+                                 Padding="0" 
+                                 VerticalOptions="Start" 
+                                 Margin="0,0,12,0">
+                                <Label Text="{Binding Number}" 
+                                     FontSize="12" 
+                                     FontAttributes="Bold" 
+                                     TextColor="White" 
+                                     HorizontalOptions="Center" 
+                                     VerticalOptions="Center" />
+                            </Frame>
+                            <Label Grid.Column="1" 
+                                 Text="{Binding Instruction}" 
+                                 FontSize="16" 
+                                 VerticalOptions="Center"
+                                 TextColor="Black" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Banner Ad Placeholder -->
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
+                   BorderColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                   HeightRequest="50"
+                   Margin="0,16,0,0"
+                   CornerRadius="0"
+                   HasShadow="False">
+                <Label Text="Banner Ad Placeholder" 
+                       FontSize="12" 
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center" />
+            </Frame>
+            
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

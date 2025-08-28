@@ -1,0 +1,311 @@
+@page "/recipe/new"
+@page "/recipe/edit/{Id:guid}"
+@using RecipePortal.WebApp.Models
+@inject HttpClient HttpClient
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<PageTitle>@(Id == Guid.Empty ? "Add New Recipe" : "Edit Recipe")</PageTitle>
+
+<div class="container mx-auto p-6 max-w-4xl">
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">
+            @(Id == Guid.Empty ? "Add New Recipe" : "Edit Recipe")
+        </h1>
+
+        <EditForm Model="@recipe" OnValidSubmit="@HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-red-600 mb-4" />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Left Column -->
+                <div class="space-y-6">
+                    <!-- English Name -->
+                    <div>
+                        <label for="englishName" class="block text-sm font-medium text-gray-700 mb-2">
+                            Recipe Name (English) *
+                        </label>
+                        <InputText id="englishName" 
+                                   @bind-Value="recipe.Name.English" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                   placeholder="Enter recipe name in English" />
+                        <ValidationMessage For="@(() => recipe.Name.English)" class="text-red-600 text-sm mt-1" />
+                    </div>
+
+                    <!-- English Description -->
+                    <div>
+                        <label for="englishDescription" class="block text-sm font-medium text-gray-700 mb-2">
+                            Description (English) *
+                        </label>
+                        <InputTextArea id="englishDescription" 
+                                       @bind-Value="recipe.Description.English" 
+                                       rows="3"
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                       placeholder="Enter recipe description in English" />
+                        <ValidationMessage For="@(() => recipe.Description.English)" class="text-red-600 text-sm mt-1" />
+                    </div>
+
+                    <!-- Prep Time -->
+                    <div>
+                        <label for="prepTime" class="block text-sm font-medium text-gray-700 mb-2">
+                            Preparation Time
+                        </label>
+                        <InputText id="prepTime" 
+                                   @bind-Value="recipe.PrepTime" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                   placeholder="e.g., 15 minutes" />
+                    </div>
+
+                    <!-- Cook Time -->
+                    <div>
+                        <label for="cookTime" class="block text-sm font-medium text-gray-700 mb-2">
+                            Cook Time
+                        </label>
+                        <InputText id="cookTime" 
+                                   @bind-Value="recipe.CookTime" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                   placeholder="e.g., 30 minutes" />
+                    </div>
+
+                    <!-- Image File Name -->
+                    <div>
+                        <label for="imageFileName" class="block text-sm font-medium text-gray-700 mb-2">
+                            Image File Name
+                        </label>
+                        <InputText id="imageFileName" 
+                                   @bind-Value="recipe.ImageFileName" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                   placeholder="e.g., garlic_butter_bread.jpg" />
+                        <p class="mt-1 text-xs text-gray-500">Place images in MAUI project's Resources/Raw/Images folder</p>
+                    </div>
+
+                    <!-- Category -->
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                            Category *
+                        </label>
+                        <InputSelect id="category" 
+                                     @bind-Value="recipe.CategoryId" 
+                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option value="">Select a category</option>
+                            @if (categories != null)
+                            {
+                                @foreach (var category in categories)
+                                {
+                                    <option value="@category.Id">@category.Name.English</option>
+                                }
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => recipe.CategoryId)" class="text-red-600 text-sm mt-1" />
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-6">
+                    <!-- Vietnamese Name -->
+                    <div>
+                        <label for="vietnameseName" class="block text-sm font-medium text-gray-700 mb-2">
+                            Tên công thức (Tiếng Việt)
+                        </label>
+                        <InputText id="vietnameseName" 
+                                   @bind-Value="recipe.Name.Vietnamese" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                   placeholder="Nhập tên công thức bằng tiếng Việt" />
+                    </div>
+
+                    <!-- Vietnamese Description -->
+                    <div>
+                        <label for="vietnameseDescription" class="block text-sm font-medium text-gray-700 mb-2">
+                            Mô tả (Tiếng Việt)
+                        </label>
+                        <InputTextArea id="vietnameseDescription" 
+                                       @bind-Value="recipe.Description.Vietnamese" 
+                                       rows="3"
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                       placeholder="Nhập mô tả công thức bằng tiếng Việt" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingredients Section -->
+            <div class="mt-8">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Ingredients / Nguyên liệu</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- English Ingredients -->
+                    <div>
+                        <label for="ingredientsEnglish" class="block text-sm font-medium text-gray-700 mb-2">
+                            Ingredients (English, one per line) *
+                        </label>
+                        <InputTextArea id="ingredientsEnglish" 
+                                       @bind-Value="recipe.IngredientsTextEnglish" 
+                                       rows="6"
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                       placeholder="1 cup flour&#10;2 eggs&#10;1/2 cup milk" />
+                    </div>
+
+                    <!-- Vietnamese Ingredients -->
+                    <div>
+                        <label for="ingredientsVietnamese" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nguyên liệu (Tiếng Việt, mỗi dòng một nguyên liệu)
+                        </label>
+                        <InputTextArea id="ingredientsVietnamese" 
+                                       @bind-Value="recipe.IngredientsTextVietnamese" 
+                                       rows="6"
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                       placeholder="1 cốc bột mì&#10;2 quả trứng&#10;1/2 cốc sữa" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions Section -->
+            <div class="mt-8">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Instructions / Hướng dẫn</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- English Instructions -->
+                    <div>
+                        <label for="instructionsEnglish" class="block text-sm font-medium text-gray-700 mb-2">
+                            Instructions (English, one step per line) *
+                        </label>
+                        <InputTextArea id="instructionsEnglish" 
+                                       @bind-Value="recipe.InstructionsTextEnglish" 
+                                       rows="8"
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                       placeholder="Mix flour and eggs&#10;Add milk gradually&#10;Cook for 10 minutes" />
+                    </div>
+
+                    <!-- Vietnamese Instructions -->
+                    <div>
+                        <label for="instructionsVietnamese" class="block text-sm font-medium text-gray-700 mb-2">
+                            Hướng dẫn (Tiếng Việt, mỗi dòng một bước)
+                        </label>
+                        <InputTextArea id="instructionsVietnamese" 
+                                       @bind-Value="recipe.InstructionsTextVietnamese" 
+                                       rows="8"
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                       placeholder="Trộn bột mì và trứng&#10;Thêm sữa từ từ&#10;Nấu trong 10 phút" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end gap-4 mt-8">
+                <button type="button" 
+                        @onclick="Cancel"
+                        class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Cancel
+                </button>
+                <button type="submit" 
+                        disabled="@isSubmitting"
+                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                    @if (isSubmitting)
+                    {
+                        <span>Saving...</span>
+                    }
+                    else
+                    {
+                        <span>@(Id == Guid.Empty ? "Create Recipe" : "Update Recipe")</span>
+                    }
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private Recipe recipe = new();
+    private List<Category>? categories;
+    private bool isSubmitting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCategories();
+        
+        if (Id != Guid.Empty)
+        {
+            await LoadRecipe();
+        }
+    }
+
+    private async Task LoadCategories()
+    {
+        try
+        {
+            categories = await HttpClient.GetFromJsonAsync<List<Category>>("api/categories");
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"Error loading categories: {ex.Message}");
+            categories = new List<Category>();
+        }
+    }
+
+    private async Task LoadRecipe()
+    {
+        try
+        {
+            var loadedRecipe = await HttpClient.GetFromJsonAsync<Recipe>($"api/recipes/{Id}");
+            if (loadedRecipe != null)
+            {
+                recipe = loadedRecipe;
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Recipe not found.");
+                Navigation.NavigateTo("/recipes");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Error loading recipe: {ex.Message}");
+            Navigation.NavigateTo("/recipes");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (isSubmitting) return;
+        
+        isSubmitting = true;
+
+        try
+        {
+            HttpResponseMessage response;
+            
+            if (Id == Guid.Empty)
+            {
+                // Create new recipe
+                response = await HttpClient.PostAsJsonAsync("api/recipes", recipe);
+            }
+            else
+            {
+                // Update existing recipe
+                response = await HttpClient.PutAsJsonAsync($"api/recipes/{Id}", recipe);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                Navigation.NavigateTo("/recipes");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                await JSRuntime.InvokeVoidAsync("alert", $"Failed to save recipe: {errorContent}");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Error saving recipe: {ex.Message}");
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/recipes");
+    }
+}

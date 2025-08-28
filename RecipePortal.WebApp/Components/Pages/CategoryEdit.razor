@@ -1,0 +1,151 @@
+@page "/category/new"
+@page "/category/edit/{Id:guid}"
+@using RecipePortal.WebApp.Models
+@inject HttpClient HttpClient
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<PageTitle>@(Id == Guid.Empty ? "Add New Category" : "Edit Category")</PageTitle>
+
+<div class="container mx-auto p-6 max-w-2xl">
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">
+            @(Id == Guid.Empty ? "Add New Category" : "Edit Category")
+        </h1>
+
+        <EditForm Model="@category" OnValidSubmit="@HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-red-600 mb-4" />
+
+            <div class="space-y-6">
+                <!-- English Name -->
+                <div>
+                    <label for="englishName" class="block text-sm font-medium text-gray-700 mb-2">
+                        Category Name (English) *
+                    </label>
+                    <InputText id="englishName" 
+                               @bind-Value="category.Name.English" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                               placeholder="Enter category name in English" />
+                    <ValidationMessage For="@(() => category.Name.English)" class="text-red-600 text-sm mt-1" />
+                </div>
+
+                <!-- Vietnamese Name -->
+                <div>
+                    <label for="vietnameseName" class="block text-sm font-medium text-gray-700 mb-2">
+                        Tên danh mục (Tiếng Việt)
+                    </label>
+                    <InputText id="vietnameseName" 
+                               @bind-Value="category.Name.Vietnamese" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                               placeholder="Nhập tên danh mục bằng tiếng Việt" />
+                    <ValidationMessage For="@(() => category.Name.Vietnamese)" class="text-red-600 text-sm mt-1" />
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end gap-4 mt-8">
+                <button type="button" 
+                        @onclick="Cancel"
+                        class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Cancel
+                </button>
+                <button type="submit" 
+                        disabled="@isSubmitting"
+                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                    @if (isSubmitting)
+                    {
+                        <span>Saving...</span>
+                    }
+                    else
+                    {
+                        <span>@(Id == Guid.Empty ? "Create Category" : "Update Category")</span>
+                    }
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private Category category = new();
+    private bool isSubmitting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != Guid.Empty)
+        {
+            await LoadCategory();
+        }
+    }
+
+    private async Task LoadCategory()
+    {
+        try
+        {
+            var loadedCategory = await HttpClient.GetFromJsonAsync<Category>($"api/categories/{Id}");
+            if (loadedCategory != null)
+            {
+                category = loadedCategory;
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Category not found.");
+                Navigation.NavigateTo("/categories");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Error loading category: {ex.Message}");
+            Navigation.NavigateTo("/categories");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (isSubmitting) return;
+        
+        isSubmitting = true;
+
+        try
+        {
+            HttpResponseMessage response;
+            
+            if (Id == Guid.Empty)
+            {
+                // Create new category
+                response = await HttpClient.PostAsJsonAsync("api/categories", category);
+            }
+            else
+            {
+                // Update existing category
+                response = await HttpClient.PutAsJsonAsync($"api/categories/{Id}", category);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                Navigation.NavigateTo("/categories");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                await JSRuntime.InvokeVoidAsync("alert", $"Failed to save category: {errorContent}");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Error saving category: {ex.Message}");
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/categories");
+    }
+}

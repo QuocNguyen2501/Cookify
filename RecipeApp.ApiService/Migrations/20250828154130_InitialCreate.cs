@@ -15,8 +15,8 @@ namespace RecipeApp.ApiService.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -27,15 +27,15 @@ namespace RecipeApp.ApiService.Migrations
                 name: "Recipes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: false),
-                    PrepTime = table.Column<string>(type: "TEXT", nullable: false),
-                    CookTime = table.Column<string>(type: "TEXT", nullable: false),
-                    ImageFileName = table.Column<string>(type: "TEXT", nullable: true),
-                    CategoryId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Ingredients = table.Column<string>(type: "TEXT", nullable: false),
-                    Instructions = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PrepTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CookTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageFileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Ingredients = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Instructions = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

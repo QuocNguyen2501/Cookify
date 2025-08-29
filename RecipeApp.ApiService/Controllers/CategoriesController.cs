@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RecipeApp.ApiService.Data;
 using RecipeApp.ApiService.Models;
+using RecipeApp.ApiService.Services;
 
 namespace RecipeApp.ApiService.Controllers;
 
@@ -9,11 +8,11 @@ namespace RecipeApp.ApiService.Controllers;
 [Route("api/[controller]")]
 public class CategoriesController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly ICategoryService _categoryService;
 
-    public CategoriesController(AppDbContext context)
+    public CategoriesController(ICategoryService categoryService)
     {
-        _context = context;
+        _categoryService = categoryService;
     }
 
     /// <summary>
@@ -23,7 +22,8 @@ public class CategoriesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
     {
-        return await _context.Categories.ToListAsync();
+        var categories = await _categoryService.GetAllCategoriesAsync();
+        return Ok(categories);
     }
 
     /// <summary>
@@ -34,14 +34,14 @@ public class CategoriesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Category>> GetCategory(Guid id)
     {
-        var category = await _context.Categories.FindAsync(id);
+        var category = await _categoryService.GetCategoryByIdAsync(id);
 
         if (category == null)
         {
             return NotFound();
         }
 
-        return category;
+        return Ok(category);
     }
 
     /// <summary>
@@ -52,28 +52,15 @@ public class CategoriesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Category>> PostCategory(Category category)
     {
-        // Ensure we have a new ID
-        category.Id = Guid.NewGuid();
-
-        _context.Categories.Add(category);
-        
         try
         {
-            await _context.SaveChangesAsync();
+            var createdCategory = await _categoryService.CreateCategoryAsync(category);
+            return CreatedAtAction(nameof(GetCategory), new { id = createdCategory.Id }, createdCategory);
         }
-        catch (DbUpdateException)
+        catch (Exception ex)
         {
-            if (CategoryExists(category.Id))
-            {
-                return Conflict();
-            }
-            else
-            {
-                throw;
-            }
+            return StatusCode(500, $"Error creating category: {ex.Message}");
         }
-
-        return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category);
     }
 
     /// <summary>
@@ -87,28 +74,24 @@ public class CategoriesController : ControllerBase
     {
         if (id != category.Id)
         {
-            return BadRequest();
+            return BadRequest("Category ID mismatch.");
         }
-
-        _context.Entry(category).State = EntityState.Modified;
 
         try
         {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!CategoryExists(id))
+            var success = await _categoryService.UpdateCategoryAsync(id, category);
+            
+            if (!success)
             {
                 return NotFound();
             }
-            else
-            {
-                throw;
-            }
-        }
 
-        return NoContent();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error updating category: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -119,27 +102,21 @@ public class CategoriesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCategory(Guid id)
     {
-        var category = await _context.Categories.FindAsync(id);
-        if (category == null)
+        var success = await _categoryService.DeleteCategoryAsync(id);
+        
+        if (!success)
         {
-            return NotFound();
-        }
-
-        // Check if category has associated recipes
-        var hasRecipes = await _context.Recipes.AnyAsync(r => r.CategoryId == id);
-        if (hasRecipes)
-        {
+            // Check if category exists to provide appropriate error message
+            var categoryExists = await _categoryService.CategoryExistsAsync(id);
+            if (!categoryExists)
+            {
+                return NotFound();
+            }
+            
+            // Category exists but has associated recipes
             return BadRequest("Cannot delete category that has associated recipes.");
         }
 
-        _context.Categories.Remove(category);
-        await _context.SaveChangesAsync();
-
         return NoContent();
-    }
-
-    private bool CategoryExists(Guid id)
-    {
-        return _context.Categories.Any(e => e.Id == id);
     }
 }

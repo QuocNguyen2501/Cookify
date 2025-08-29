@@ -4,7 +4,7 @@
 
 Cookify is a **multi-language recipe management system** with Vietnamese and English support, built using .NET 9.0 Aspire architecture. This is a **complete, production-ready solution** with three core components:
 
-1. **RecipeApp.ApiService** - ASP.NET Core Web API with SQLite database
+1. **RecipeApp.ApiService** - ASP.NET Core Web API with SQL Server database
 2. **RecipePortal.WebApp** - Blazor WebAssembly administrative portal 
 3. **RecipeApp.Mobile** - .NET MAUI cross-platform mobile application
 
@@ -14,6 +14,8 @@ Cookify is a **multi-language recipe management system** with Vietnamese and Eng
 
 ### .NET Aspire Orchestration
 - **AppHost Project**: `RecipeApp.AppHost` orchestrates all services via `Program.cs`
+- **SQL Server Container**: Managed by Aspire with automatic service discovery
+- **Database Management**: `recipesdb` database created and managed through Aspire
 - **Service References**: WebApp references ApiService for HTTP communication
 - **Service Defaults**: Shared configuration in `RecipeApp.ServiceDefaults`
 - **Run Command**: Always use `dotnet run --project RecipeApp.AppHost` for development
@@ -38,10 +40,13 @@ public class RecipeLocalizedText
 
 **Key Usage Pattern**: Every user-facing text field (names, descriptions, ingredients, instructions) uses `RecipeLocalizedText` objects.
 
-### Database Architecture (SQLite + EF Core)
+### Database Architecture (SQL Server + EF Core)
+- **Container Orchestration**: SQL Server runs in Docker container managed by Aspire
+- **Connection Management**: Automatic connection string injection via Aspire service discovery
+- **Retry Logic**: `EnableRetryOnFailure` configured for transient error handling
 - **JSON Serialization**: `RecipeLocalizedText` objects stored as JSON columns via EF Core value converters
 - **Relationship**: `Recipe` → `Category` (Many-to-One with navigation properties)
-- **Location**: Database file at `RecipeApp.ApiService/recipes.db`
+- **Database Name**: `recipesdb` (managed by SQL Server container)
 - **Seeding**: `DatabaseSeeder.cs` populates sample Vietnamese recipes on startup
 
 ## 🔧 Development Guidelines
@@ -132,7 +137,7 @@ RecipeApp.Mobile/
 ### Adding New Recipe Fields
 1. Update `Recipe.cs` model with `RecipeLocalizedText` property
 2. Update `AppDbContext.cs` with JSON conversion for the new field
-3. Create and apply EF Core migration
+3. Create and apply EF Core migration for SQL Server
 4. Update API controllers to handle new field
 5. Update Blazor forms in `RecipeEdit.razor`
 6. Update mobile ViewModels and UI to display new field
@@ -182,21 +187,22 @@ RecipeApp.Mobile/
 
 ## 📊 Database Schema
 
-### Core Tables
+### Core Tables (SQL Server)
 ```sql
 -- Categories: Localized category names
-Categories (Id GUID, Name JSON)
+Categories (Id UNIQUEIDENTIFIER, Name NVARCHAR(MAX))
 
 -- Recipes: Full recipe data with localized content
-Recipes (Id GUID, Name JSON, Description JSON, 
-         PrepTime TEXT, CookTime TEXT, ImageFileName TEXT,
-         CategoryId GUID, Ingredients JSON, Instructions JSON)
+Recipes (Id UNIQUEIDENTIFIER, Name NVARCHAR(MAX), Description NVARCHAR(MAX), 
+         PrepTime NVARCHAR(MAX), CookTime NVARCHAR(MAX), ImageFileName NVARCHAR(MAX),
+         CategoryId UNIQUEIDENTIFIER, Ingredients NVARCHAR(MAX), Instructions NVARCHAR(MAX))
 ```
 
 ### Sample Data
-- Database includes Vietnamese recipe examples
+- SQL Server database includes Vietnamese recipe examples
 - Categories: "Món chính/Main Dishes", "Tráng miệng/Desserts"
 - Ready-to-use sample data for development and testing
+- Database automatically created and seeded on first run
 
 ## 🚀 Quick Start for New Developers
 
@@ -241,6 +247,7 @@ dotnet run --project RecipeApp.AppHost
 - **Mobile Loading**: Check `recipes.json` exists in Resources/Raw with MauiAsset build action  
 - **Localization**: Verify both English and Vietnamese content is provided
 - **API Calls**: Confirm Aspire service discovery is working properly
+- **SQL Server Connection**: Ensure SQL Server container is running and retry logic is configured
 
 ---
 

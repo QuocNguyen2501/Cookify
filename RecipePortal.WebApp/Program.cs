@@ -19,6 +19,15 @@ builder.Services.AddHttpClient<WeatherApiClient>(client =>
         client.BaseAddress = new("https+http://apiservice");
     });
 
+// Add HttpClient for API calls
+builder.Services.AddHttpClient("ApiClient", client =>
+{
+    client.BaseAddress = new("https+http://apiservice");
+});
+
+// Register a default HttpClient that can be injected directly
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiClient"));
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

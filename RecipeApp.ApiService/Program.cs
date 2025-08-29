@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RecipeApp.ApiService.Data;
 using RecipeApp.ApiService.Extensions;
+using RecipeApp.ApiService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +11,17 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 
-// Add Entity Framework Core with SQLite
+// Add Entity Framework Core with SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") 
-        ?? "Data Source=recipes.db"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("recipesdb"), 
+        sqlOptions => sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null)));
+
+// Register business services
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IRecipeService, RecipeService>();
 
 // Add API services
 builder.Services.AddControllers();

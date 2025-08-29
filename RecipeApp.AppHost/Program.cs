@@ -1,6 +1,13 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var apiService = builder.AddProject<Projects.RecipeApp_ApiService>("apiservice");
+// Add SQL Server database
+var sqlServer = builder.AddSqlServer("sqlserver")
+                      .WithDataVolume();
+
+var database = sqlServer.AddDatabase("recipesdb");
+
+var apiService = builder.AddProject<Projects.RecipeApp_ApiService>("apiservice")
+                       .WithReference(database);
 
 builder.AddProject<Projects.RecipePortal_WebApp>("webfrontend")
     .WithExternalHttpEndpoints()

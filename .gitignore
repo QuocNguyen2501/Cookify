@@ -3,3 +3,4 @@ obj/
 node_modules/
 .vs/
 *.csproj.user
+.playwright-mcp/

@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RecipeApp.ApiService.Data;
 using RecipeApp.ApiService.Models;
-using System.Text.Json;
+using RecipeApp.ApiService.Services;
 
 namespace RecipeApp.ApiService.Controllers;
 
@@ -10,11 +8,11 @@ namespace RecipeApp.ApiService.Controllers;
 [Route("api/[controller]")]
 public class RecipesController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IRecipeService _recipeService;
 
-    public RecipesController(AppDbContext context)
+    public RecipesController(IRecipeService recipeService)
     {
-        _context = context;
+        _recipeService = recipeService;
     }
 
     /// <summary>
@@ -24,9 +22,8 @@ public class RecipesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes()
     {
-        return await _context.Recipes
-            .Include(r => r.Category)
-            .ToListAsync();
+        var recipes = await _recipeService.GetAllRecipesAsync();
+        return Ok(recipes);
     }
 
     /// <summary>
@@ -37,16 +34,14 @@ public class RecipesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Recipe>> GetRecipe(Guid id)
     {
-        var recipe = await _context.Recipes
-            .Include(r => r.Category)
-            .FirstOrDefaultAsync(r => r.Id == id);
+        var recipe = await _recipeService.GetRecipeByIdAsync(id);
 
         if (recipe == null)
         {
             return NotFound();
         }
 
-        return recipe;
+        return Ok(recipe);
     }
 
     /// <summary>
@@ -57,40 +52,19 @@ public class RecipesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Recipe>> PostRecipe(Recipe recipe)
     {
-        // Ensure we have a new ID
-        recipe.Id = Guid.NewGuid();
-
-        // Validate that the category exists
-        var categoryExists = await _context.Categories.AnyAsync(c => c.Id == recipe.CategoryId);
-        if (!categoryExists)
-        {
-            return BadRequest("Invalid CategoryId. Category does not exist.");
-        }
-
-        _context.Recipes.Add(recipe);
-        
         try
         {
-            await _context.SaveChangesAsync();
-            
-            // Load the category for the response
-            await _context.Entry(recipe)
-                .Reference(r => r.Category)
-                .LoadAsync();
+            var createdRecipe = await _recipeService.CreateRecipeAsync(recipe);
+            return CreatedAtAction(nameof(GetRecipe), new { id = createdRecipe.Id }, createdRecipe);
         }
-        catch (DbUpdateException)
+        catch (ArgumentException ex)
         {
-            if (RecipeExists(recipe.Id))
-            {
-                return Conflict();
-            }
-            else
-            {
-                throw;
-            }
+            return BadRequest(ex.Message);
         }
-
-        return CreatedAtAction(nameof(GetRecipe), new { id = recipe.Id }, recipe);
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error creating recipe: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -104,35 +78,28 @@ public class RecipesController : ControllerBase
     {
         if (id != recipe.Id)
         {
-            return BadRequest();
+            return BadRequest("Recipe ID mismatch.");
         }
-
-        // Validate that the category exists
-        var categoryExists = await _context.Categories.AnyAsync(c => c.Id == recipe.CategoryId);
-        if (!categoryExists)
-        {
-            return BadRequest("Invalid CategoryId. Category does not exist.");
-        }
-
-        _context.Entry(recipe).State = EntityState.Modified;
 
         try
         {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!RecipeExists(id))
+            var success = await _recipeService.UpdateRecipeAsync(id, recipe);
+            
+            if (!success)
             {
                 return NotFound();
             }
-            else
-            {
-                throw;
-            }
-        }
 
-        return NoContent();
+            return NoContent();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error updating recipe: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -143,14 +110,12 @@ public class RecipesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteRecipe(Guid id)
     {
-        var recipe = await _context.Recipes.FindAsync(id);
-        if (recipe == null)
+        var success = await _recipeService.DeleteRecipeAsync(id);
+        
+        if (!success)
         {
             return NotFound();
         }
-
-        _context.Recipes.Remove(recipe);
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }
@@ -164,19 +129,7 @@ public class RecipesController : ControllerBase
     {
         try
         {
-            // Fetch all recipes with their associated categories
-            var recipes = await _context.Recipes
-                .Include(r => r.Category)
-                .ToListAsync();
-
-            // Serialize to JSON with proper formatting
-            var jsonOptions = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-
-            var jsonString = JsonSerializer.Serialize(recipes, jsonOptions);
+            var jsonString = await _recipeService.ExportRecipesAsJsonAsync();
 
             // Return as downloadable file
             var bytes = System.Text.Encoding.UTF8.GetBytes(jsonString);
@@ -188,10 +141,5 @@ public class RecipesController : ControllerBase
         {
             return StatusCode(500, $"Error exporting recipes: {ex.Message}");
         }
-    }
-
-    private bool RecipeExists(Guid id)
-    {
-        return _context.Recipes.Any(e => e.Id == id);
     }
 }

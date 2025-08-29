@@ -1,4 +1,5 @@
 @page "/recipes"
+@rendermode InteractiveServer
 @using RecipePortal.WebApp.Models
 @inject HttpClient HttpClient
 @inject IJSRuntime JSRuntime
@@ -19,11 +20,11 @@
         </div>
     </div>
 
-    @if (recipes == null)
+    @if (isLoading)
     {
         <p class="text-gray-600">Loading recipes...</p>
     }
-    else if (recipes.Count == 0)
+    else if (recipes == null || recipes.Count == 0)
     {
         <div class="bg-gray-100 border border-gray-300 rounded-lg p-6 text-center">
             <p class="text-gray-600 text-lg">No recipes found.</p>
@@ -118,22 +119,39 @@
     private List<Recipe>? recipes;
     private bool showDeleteModal = false;
     private Recipe? recipeToDelete;
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadRecipes();
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        // Ensure data is reloaded when navigating to this page
+        if (recipes == null)
+        {
+            await LoadRecipes();
+        }
+    }
+
     private async Task LoadRecipes()
     {
         try
         {
+            isLoading = true;
+            StateHasChanged(); // Force UI update
             recipes = await HttpClient.GetFromJsonAsync<List<Recipe>>("api/recipes");
         }
         catch (HttpRequestException ex)
         {
             Console.WriteLine($"Error loading recipes: {ex.Message}");
             recipes = new List<Recipe>();
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged(); // Force UI update after loading
         }
     }
 

@@ -13,7 +13,7 @@
             @(Id == Guid.Empty ? "Add New Recipe" : "Edit Recipe")
         </h1>
 
-        <EditForm Model="@recipe" OnValidSubmit="@HandleValidSubmit">
+        <EditForm Model="@recipe" FormName="RecipeForm" OnValidSubmit="@HandleValidSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary class="text-red-600 mb-4" />
 
@@ -217,6 +217,8 @@
     private Recipe recipe = new();
     private List<Category>? categories;
     private bool isSubmitting = false;
+    private bool hasRendered = false;
+    private string? errorMessage = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -225,6 +227,18 @@
         if (Id != Guid.Empty)
         {
             await LoadRecipe();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        hasRendered = true;
+        
+        if (!string.IsNullOrEmpty(errorMessage))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", errorMessage);
+            errorMessage = null;
+            StateHasChanged();
         }
     }
 
@@ -252,13 +266,27 @@
             }
             else
             {
-                await JSRuntime.InvokeVoidAsync("alert", "Recipe not found.");
+                if (hasRendered)
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "Recipe not found.");
+                }
+                else
+                {
+                    errorMessage = "Recipe not found.";
+                }
                 Navigation.NavigateTo("/recipes");
             }
         }
         catch (HttpRequestException ex)
         {
-            await JSRuntime.InvokeVoidAsync("alert", $"Error loading recipe: {ex.Message}");
+            if (hasRendered)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"Error loading recipe: {ex.Message}");
+            }
+            else
+            {
+                errorMessage = $"Error loading recipe: {ex.Message}";
+            }
             Navigation.NavigateTo("/recipes");
         }
     }
@@ -291,12 +319,30 @@
             else
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                await JSRuntime.InvokeVoidAsync("alert", $"Failed to save recipe: {errorContent}");
+                var message = $"Failed to save recipe: {errorContent}";
+                
+                if (hasRendered)
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", message);
+                }
+                else
+                {
+                    errorMessage = message;
+                }
             }
         }
         catch (HttpRequestException ex)
         {
-            await JSRuntime.InvokeVoidAsync("alert", $"Error saving recipe: {ex.Message}");
+            var message = $"Error saving recipe: {ex.Message}";
+            
+            if (hasRendered)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", message);
+            }
+            else
+            {
+                errorMessage = message;
+            }
         }
         finally
         {

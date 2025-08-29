@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RecipeApp.ApiService.Models;
+using RecipeApp.ApiService.Models.DTOs;
 using RecipeApp.ApiService.Services;
 
 namespace RecipeApp.ApiService.Controllers;
@@ -20,10 +21,11 @@ public class RecipesController : ControllerBase
     /// </summary>
     /// <returns>List of all recipes</returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes()
+    public async Task<ActionResult<IEnumerable<RecipeDto>>> GetRecipes()
     {
         var recipes = await _recipeService.GetAllRecipesAsync();
-        return Ok(recipes);
+        var recipeDtos = recipes.Select(RecipeDto.FromEntity).ToList();
+        return Ok(recipeDtos);
     }
 
     /// <summary>
@@ -32,7 +34,7 @@ public class RecipesController : ControllerBase
     /// <param name="id">The recipe ID</param>
     /// <returns>The recipe if found</returns>
     [HttpGet("{id}")]
-    public async Task<ActionResult<Recipe>> GetRecipe(Guid id)
+    public async Task<ActionResult<RecipeDto>> GetRecipe(Guid id)
     {
         var recipe = await _recipeService.GetRecipeByIdAsync(id);
 
@@ -41,7 +43,8 @@ public class RecipesController : ControllerBase
             return NotFound();
         }
 
-        return Ok(recipe);
+        var recipeDto = RecipeDto.FromEntity(recipe);
+        return Ok(recipeDto);
     }
 
     /// <summary>

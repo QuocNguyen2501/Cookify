@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using RecipeApp.ApiService.Data;
 using RecipeApp.ApiService.Models;
+using RecipeApp.ApiService.Models.DTOs;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace RecipeApp.ApiService.Services;
 
@@ -138,6 +140,9 @@ public class RecipeService : IRecipeService
             .Include(r => r.Category)
             .ToListAsync();
 
+        // Convert to DTOs to avoid circular references
+        var recipeDtos = recipes.Select(RecipeDto.FromEntity).ToList();
+
         // Serialize to JSON with proper formatting
         var jsonOptions = new JsonSerializerOptions
         {
@@ -145,7 +150,7 @@ public class RecipeService : IRecipeService
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        return JsonSerializer.Serialize(recipes, jsonOptions);
+        return JsonSerializer.Serialize(recipeDtos, jsonOptions);
     }
 
     /// <summary>

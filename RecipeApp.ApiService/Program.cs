@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using RecipeApp.ApiService.Data;
 using RecipeApp.ApiService.Extensions;
 using RecipeApp.ApiService.Services;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,8 +25,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 
-// Add API services
-builder.Services.AddControllers();
+// Add API services with JSON options to handle circular references
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Handle circular references by ignoring cycles
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
 
 // Add OpenAPI/Swagger support
 builder.Services.AddOpenApi();

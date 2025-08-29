@@ -1,8 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace RecipePortal.WebApp.Models;
 
 public class RecipeLocalizedText
 {
+    [Required(ErrorMessage = "English text is required")]
+    [StringLength(200, ErrorMessage = "English text cannot exceed 200 characters")]
     public string English { get; set; } = string.Empty;
+    
+    [StringLength(200, ErrorMessage = "Vietnamese text cannot exceed 200 characters")]
     public string Vietnamese { get; set; } = string.Empty;
 
     /// <summary>

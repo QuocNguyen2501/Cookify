@@ -1,7 +1,7 @@
 @page "/categories"
 @rendermode InteractiveServer
 @using RecipePortal.WebApp.Models
-@inject HttpClient HttpClient
+@inject IHttpClientFactory HttpClientFactory
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Category Management</PageTitle>
@@ -123,7 +123,8 @@
         {
             isLoading = true;
             StateHasChanged(); // Force UI update
-            categories = await HttpClient.GetFromJsonAsync<List<Category>>("api/categories");
+            using var httpClient = HttpClientFactory.CreateClient("ApiClient");
+            categories = await httpClient.GetFromJsonAsync<List<Category>>("api/categories");
         }
         catch (HttpRequestException ex)
         {
@@ -156,7 +157,8 @@
         {
             try
             {
-                var response = await HttpClient.DeleteAsync($"api/categories/{categoryToDelete.Id}");
+                using var httpClient = HttpClientFactory.CreateClient("ApiClient");
+                var response = await httpClient.DeleteAsync($"api/categories/{categoryToDelete.Id}");
                 
                 if (response.IsSuccessStatusCode)
                 {

@@ -4,10 +4,10 @@ using System.Text.Json;
 namespace RecipeApp.Mobile.Services;
 
 /// <summary>
-/// Service responsible for loading and managing category data
+/// Service responsible for loading and managing category data from local JSON files
 /// Follows the Single Responsibility Principle
 /// </summary>
-public class CategoryDataService
+public class CategoryDataService : ICategoryDataService
 {
     private List<Category>? _categories;
 
@@ -41,12 +41,6 @@ public class CategoryDataService
             };
             
             _categories = JsonSerializer.Deserialize<List<Category>>(json, options) ?? new List<Category>();
-            
-            // Debug logging for category loading
-            foreach (var category in _categories)
-            {
-                System.Diagnostics.Debug.WriteLine($"Loaded category: {category.Name.English}, ImageFileName: {category.ImageFileName}");
-            }
         }
         catch (Exception ex)
         {

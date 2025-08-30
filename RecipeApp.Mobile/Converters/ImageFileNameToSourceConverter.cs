@@ -10,14 +10,10 @@ public class ImageFileNameToSourceConverter : IValueConverter
         {
             try
             {
-                // Log for debugging
-                System.Diagnostics.Debug.WriteLine($"Loading image: {fileName}");
-                
                 // For MAUI embedded images, try different approaches
                 
                 // Approach 1: Direct filename (most common for embedded resources)
                 var imageSource = ImageSource.FromFile(fileName);
-                System.Diagnostics.Debug.WriteLine($"Successfully created ImageSource for: {fileName}");
                 return imageSource;
             }
             catch (Exception ex)
@@ -38,7 +34,6 @@ public class ImageFileNameToSourceConverter : IValueConverter
             }
         }
         
-        System.Diagnostics.Debug.WriteLine("No image filename provided, returning default");
         // Return default image if no image specified
         return ImageSource.FromFile("dotnet_bot.svg");
     }

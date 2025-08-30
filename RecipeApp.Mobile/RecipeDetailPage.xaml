@@ -5,8 +5,7 @@
              xmlns:converters="clr-namespace:RecipeApp.Mobile.Converters"
              xmlns:viewModels="clr-namespace:RecipeApp.Mobile.ViewModels"
              xmlns:strings="clr-namespace:RecipeApp.Mobile.Resources.Strings"
-             Title="{Binding Title}"
-             x:DataType="viewModels:RecipeDetailViewModel">
+             Title="{Binding Title}">
     
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -16,42 +15,37 @@
     </ContentPage.Resources>
 
     <ScrollView>
-        <StackLayout Padding="16" Spacing="16">
-            
+        <StackLayout Padding="16" Spacing="10">
             <!-- Recipe Image -->
             <Image Source="{Binding CurrentRecipe.ImageFileName, Converter={StaticResource ImageConverter}}"
                    Aspect="AspectFill"
                    HeightRequest="200"
                    HorizontalOptions="FillAndExpand"
-                   BackgroundColor="LightGray"
-                   x:DataType="viewModels:RecipeDetailViewModel" />
+                   BackgroundColor="LightGray" />
 
             <!-- Recipe Name -->
             <Label Text="{Binding DisplayName}"
                    FontSize="24"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
-                   TextColor="Black"
-                   x:DataType="viewModels:RecipeDetailViewModel" />
+                   TextColor="Black" />
 
             <!-- Recipe Description -->
             <Label Text="{Binding DisplayDescription}"
                    FontSize="16"
                    TextColor="Gray"
                    HorizontalOptions="Center"
-                   HorizontalTextAlignment="Center"
-                   x:DataType="viewModels:RecipeDetailViewModel" />
+                   HorizontalTextAlignment="Center" />
 
             <!-- Cooking Time Info -->
-            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto" Margin="0,16,0,0">
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto">
                 <StackLayout Grid.Column="0" HorizontalOptions="Center">
                     <Label Text="{Binding Source={x:Static strings:AppResources.PrepTime}, 
                                   Converter={StaticResource StaticResourceConverter}}" 
                            FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
                     <Label Text="{Binding CurrentRecipe.PrepTime}" 
                            FontSize="16" 
-                           HorizontalOptions="Center"
-                           x:DataType="viewModels:RecipeDetailViewModel" />
+                           HorizontalOptions="Center" />
                 </StackLayout>
                 
                 <StackLayout Grid.Column="1" HorizontalOptions="Center">
@@ -60,20 +54,18 @@
                            FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
                     <Label Text="{Binding CurrentRecipe.CookTime}" 
                            FontSize="16" 
-                           HorizontalOptions="Center"
-                           x:DataType="viewModels:RecipeDetailViewModel" />
+                           HorizontalOptions="Center" />
                 </StackLayout>
             </Grid>
 
             <!-- Category -->
-            <StackLayout HorizontalOptions="Center" Margin="0,8,0,0">
+            <StackLayout HorizontalOptions="Center">
                 <Label Text="{Binding Source={x:Static strings:AppResources.Category}, 
                               Converter={StaticResource StaticResourceConverter}}" 
                        FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
                 <Label Text="{Binding DisplayCategoryName}" 
                        FontSize="16" 
-                       HorizontalOptions="Center"
-                       x:DataType="viewModels:RecipeDetailViewModel" />
+                       HorizontalOptions="Center" />
             </StackLayout>
 
             <!-- Ingredients Section -->
@@ -81,16 +73,15 @@
                           Converter={StaticResource StaticResourceConverter}}" 
                    FontSize="20" 
                    FontAttributes="Bold" 
-                   Margin="0,24,0,8"
+                   Margin="0,0,0,8"
                    TextColor="Black" />
             
             <CollectionView ItemsSource="{Binding DisplayIngredients}" 
-                          BackgroundColor="Transparent"
-                          x:DataType="viewModels:RecipeDetailViewModel">
+                          BackgroundColor="Transparent">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="x:String">
                         <Grid ColumnDefinitions="Auto,*" 
-                              Padding="8" 
+                              Padding="0,0,0,8" 
                               RowSpacing="4">
                             <Ellipse Grid.Column="0" 
                                    WidthRequest="8" 
@@ -114,16 +105,15 @@
                           Converter={StaticResource StaticResourceConverter}}" 
                    FontSize="20" 
                    FontAttributes="Bold" 
-                   Margin="0,24,0,8"
+                   Margin="0,0,0,8"
                    TextColor="Black" />
             
             <CollectionView ItemsSource="{Binding DisplayInstructions}" 
-                          BackgroundColor="Transparent"
-                          x:DataType="viewModels:RecipeDetailViewModel">
+                          BackgroundColor="Transparent">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="x:String">
                         <Grid ColumnDefinitions="*" 
-                              Padding="8,12" 
+                              Padding="8,0" 
                               RowSpacing="4">
                             <Label Grid.Column="0" 
                                  Text="{Binding .}" 

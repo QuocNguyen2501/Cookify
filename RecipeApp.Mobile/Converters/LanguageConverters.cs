@@ -14,7 +14,10 @@ public class LanguageConverter : IValueConverter
             // Get the current language from the service locator
             var languageService = Application.Current?.Handler?.MauiContext?.Services?.GetService<LanguageService>();
             var currentLanguage = languageService?.CurrentLanguage ?? "en";
-            return localizedText.GetLocalizedText(currentLanguage);
+            
+            var result = localizedText.GetLocalizedText(currentLanguage);
+            
+            return result;
         }
         return value?.ToString() ?? string.Empty;
     }
@@ -33,18 +36,20 @@ public class StaticResourceConverter : IValueConverter
     {
         if (value is string resourceKey && !string.IsNullOrWhiteSpace(resourceKey))
         {
-            // Get the current language from the service locator
-            var languageService = Application.Current?.Handler?.MauiContext?.Services?.GetService<LanguageService>();
-            var currentLanguage = languageService?.CurrentLanguage ?? "en";
-            
             try
             {
+                // Get the current language from the service locator
+                var languageService = Application.Current?.Handler?.MauiContext?.Services?.GetService<LanguageService>();
+                var currentLanguage = languageService?.CurrentLanguage ?? "en";
+                
                 var cultureInfo = new CultureInfo(currentLanguage);
                 var localizedValue = ResourceManager.GetString(resourceKey, cultureInfo);
+                
                 return localizedValue ?? resourceKey; // Fallback to key if translation not found
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"StaticResourceConverter Error: {ex.Message}");
                 // Fallback to key if any error occurs
                 return resourceKey;
             }

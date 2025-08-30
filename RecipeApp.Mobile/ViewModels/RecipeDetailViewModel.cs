@@ -1,6 +1,5 @@
 using RecipeApp.Models;
 using RecipeApp.Mobile.Services;
-using RecipeApp.Mobile.Resources.Strings;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -12,7 +11,7 @@ namespace RecipeApp.Mobile.ViewModels;
 [QueryProperty(nameof(RecipeId), "id")]
 public partial class RecipeDetailViewModel : BaseViewModel, IDisposable
 {
-    private readonly RecipeDataService _recipeDataService;
+    private readonly IRecipeDataService _recipeDataService;
     private readonly LanguageService _languageService;
 
     [ObservableProperty]
@@ -55,7 +54,7 @@ public partial class RecipeDetailViewModel : BaseViewModel, IDisposable
         }
     }
 
-    public RecipeDetailViewModel(RecipeDataService recipeDataService, LanguageService languageService)
+    public RecipeDetailViewModel(IRecipeDataService recipeDataService, LanguageService languageService)
     {
         _recipeDataService = recipeDataService;
         _languageService = languageService;

@@ -12,8 +12,8 @@ namespace RecipeApp.Mobile.ViewModels;
 /// </summary>
 public partial class MainViewModel : BaseViewModel, IDisposable
 {
-    private readonly RecipeDataService _recipeDataService;
-    private readonly CategoryDataService _categoryDataService;
+    private readonly IRecipeDataService _recipeDataService;
+    private readonly ICategoryDataService _categoryDataService;
     private readonly LanguageService _languageService;
 
     public ObservableCollection<Recipe> Recipes { get; }
@@ -40,7 +40,7 @@ public partial class MainViewModel : BaseViewModel, IDisposable
         _languageService.SetLanguage(value);
     }
 
-    public MainViewModel(RecipeDataService recipeDataService, CategoryDataService categoryDataService, LanguageService languageService)
+    public MainViewModel(IRecipeDataService recipeDataService, ICategoryDataService categoryDataService, LanguageService languageService)
     {
         _recipeDataService = recipeDataService;
         _categoryDataService = categoryDataService;
@@ -50,11 +50,14 @@ public partial class MainViewModel : BaseViewModel, IDisposable
         FilteredRecipes = new ObservableCollection<Recipe>();
         Categories = new ObservableCollection<Category>();
 
-        UpdateLocalizedTitle();
-        
-        // Subscribe to language changes
+        // Subscribe to language changes before setting current language
         _languageService.LanguageChanged += OnLanguageChanged;
+        
+        // Initialize current language from service
         CurrentLanguage = _languageService.CurrentLanguage;
+        
+        // Update localized title after setting language
+        UpdateLocalizedTitle();
 
         Task.Run(async () => await LoadData());
     }
@@ -94,16 +97,9 @@ public partial class MainViewModel : BaseViewModel, IDisposable
     [RelayCommand]
     private async Task GoToCategory(Category? category)
     {
-        System.Diagnostics.Debug.WriteLine($"GoToCategory command called with category: {category?.Name?.English}");
-        
         if (category != null)
         {
-            System.Diagnostics.Debug.WriteLine($"Navigating to categoryrecipes?categoryId={category.Id}");
             await Shell.Current.GoToAsync($"categoryrecipes?categoryId={category.Id}");
-        }
-        else
-        {
-            System.Diagnostics.Debug.WriteLine("Category is null!");
         }
     }
 
@@ -113,7 +109,6 @@ public partial class MainViewModel : BaseViewModel, IDisposable
     [RelayCommand]
     private void ShowLanguagePopup()
     {
-        System.Diagnostics.Debug.WriteLine("ShowLanguagePopup command called");
         IsLanguagePopupVisible = true;
     }
 
@@ -164,8 +159,6 @@ public partial class MainViewModel : BaseViewModel, IDisposable
                 foreach (var category in categories)
                 {
                     Categories.Add(category);
-                    // Debug logging
-                    System.Diagnostics.Debug.WriteLine($"Loaded category: {category.Name.English}, ImageFileName: {category.ImageFileName}");
                 }
             });
         }
@@ -200,6 +193,9 @@ public partial class MainViewModel : BaseViewModel, IDisposable
             {
                 Categories.Add(category);
             }
+            
+            // Trigger property changed for Title to refresh static resources
+            OnPropertyChanged(nameof(Title));
         });
     }
 

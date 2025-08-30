@@ -38,36 +38,78 @@
                 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Margin="10">
+                        <Grid Margin="12">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer 
                                     Command="{Binding Source={x:Reference Name=mainPage}, Path=BindingContext.GoToCategoryCommand}"
                                     CommandParameter="{Binding .}" />
                             </Grid.GestureRecognizers>
 
-                            <!-- Main Frame for visual styling with compiled bindings -->
+                            <!-- Modern Card Design with Shadow -->
                             <Border BackgroundColor="Transparent"
                                    Padding="0"
-                                   HeightRequest="150">
+                                   HeightRequest="160"
+                                   StrokeShape="RoundRectangle 16"
+                                   StrokeThickness="0"
+                                   Shadow="0,4,12,#40000000">
                                 
                                 <Grid>
-                                    <!-- Category Background Image -->
-                                    <Image Source="{Binding ImageFileName, Converter={StaticResource ImageConverter}}"
-                                           Aspect="AspectFill"
+                                    <!-- Clipped Background Image -->
+                                    <Border StrokeShape="RoundRectangle 16"
+                                           StrokeThickness="0"
                                            VerticalOptions="FillAndExpand"
-                                           HorizontalOptions="FillAndExpand" />
+                                           HorizontalOptions="FillAndExpand">
+                                        <Image Source="{Binding ImageFileName, Converter={StaticResource ImageConverter}}"
+                                               Aspect="AspectFill"
+                                               VerticalOptions="FillAndExpand"
+                                               HorizontalOptions="FillAndExpand" />
+                                    </Border>
                                     
-                                    <!-- Category Name -->
-                                    <Label Text="{Binding Name, Converter={StaticResource LanguageConverter}}" 
-                                           FontSize="25" 
-                                           FontAttributes="Bold" 
-                                           TextColor="White"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center"
-                                           HorizontalTextAlignment="Center"
-                                           VerticalTextAlignment="Center"
-                                           LineBreakMode="WordWrap"
-                                           MaxLines="2" />
+                                    <!-- Gradient Overlay for Text Contrast -->
+                                    <Border StrokeShape="RoundRectangle 16"
+                                           StrokeThickness="0"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <GradientStop Color="Transparent" Offset="0.0" />
+                                                <GradientStop Color="Transparent" Offset="0.4" />
+                                                <GradientStop Color="#40000000" Offset="0.7" />
+                                                <GradientStop Color="#80000000" Offset="1.0" />
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                    </Border>
+                                    
+                                    <!-- Category Name with Enhanced Typography -->
+                                    <Grid VerticalOptions="End" Margin="0,0,0,16">
+                                        <Label Text="{Binding Name, Converter={StaticResource LanguageConverter}}" 
+                                               FontSize="22" 
+                                               FontAttributes="Bold" 
+                                               TextColor="White"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="End"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center"
+                                               LineBreakMode="WordWrap"
+                                               MaxLines="2"
+                                               Margin="16,8">
+                                            <!-- Text Shadow for Better Readability -->
+                                            <Label.Shadow>
+                                                <Shadow Brush="Black"
+                                                        Offset="1,1"
+                                                        Radius="4"
+                                                        Opacity="0.8" />
+                                            </Label.Shadow>
+                                        </Label>
+                                    </Grid>
+                                    
+                                    <!-- Subtle Hover Effect Border -->
+                                    <Border StrokeShape="RoundRectangle 16"
+                                           Stroke="{AppThemeBinding Light=#20FFFFFF, Dark=#30FFFFFF}"
+                                           StrokeThickness="1"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand"
+                                           BackgroundColor="Transparent" />
                                 </Grid>
                             </Border>
                         </Grid>
@@ -92,19 +134,18 @@
         </RefreshView>
 
         <!-- Banner Ad Placeholder -->
-        <Frame Grid.Row="1" 
-               BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}" 
-               HeightRequest="50" 
-               Margin="0"
-               CornerRadius="0"
-               HasShadow="False">
+        <Border Grid.Row="1" 
+                BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}" 
+                HeightRequest="50" 
+                Margin="0"
+                StrokeShape="Rectangle">
             <Label Text="{Binding Source={x:Static strings:AppResources.BannerAdPlaceholder}, 
                           Converter={StaticResource StaticResourceConverter}}" 
                    FontSize="12" 
                    TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
                    HorizontalOptions="Center" 
                    VerticalOptions="Center" />
-        </Frame>
+        </Border>
 
     </Grid>
 </ContentPage>

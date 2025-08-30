@@ -4,10 +4,10 @@ using System.Text.Json;
 namespace RecipeApp.Mobile.Services;
 
 /// <summary>
-/// Service responsible for loading and managing recipe data
+/// Service responsible for loading and managing recipe data from local JSON files
 /// Follows the Single Responsibility Principle
 /// </summary>
-public class RecipeDataService
+public class RecipeDataService : IRecipeDataService
 {
     private List<Recipe>? _recipes;
 
@@ -76,8 +76,6 @@ public class RecipeDataService
                 Category = dto.Category,
                 CategoryId = dto.Category.Id
             }).ToList();
-            
-            System.Diagnostics.Debug.WriteLine($"Loaded {_recipes.Count} recipes with category information");
         }
         catch (Exception ex)
         {

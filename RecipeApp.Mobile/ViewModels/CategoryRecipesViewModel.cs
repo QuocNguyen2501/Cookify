@@ -13,8 +13,8 @@ namespace RecipeApp.Mobile.ViewModels;
 [QueryProperty(nameof(CategoryId), "categoryId")]
 public partial class CategoryRecipesViewModel : BaseViewModel, IDisposable
 {
-    private readonly RecipeDataService _recipeDataService;
-    private readonly CategoryDataService _categoryDataService;
+    private readonly IRecipeDataService _recipeDataService;
+    private readonly ICategoryDataService _categoryDataService;
     private readonly LanguageService _languageService;
 
     [ObservableProperty]
@@ -63,7 +63,7 @@ public partial class CategoryRecipesViewModel : BaseViewModel, IDisposable
         FilterRecipes();
     }
 
-    public CategoryRecipesViewModel(RecipeDataService recipeDataService, CategoryDataService categoryDataService, LanguageService languageService)
+    public CategoryRecipesViewModel(IRecipeDataService recipeDataService, ICategoryDataService categoryDataService, LanguageService languageService)
     {
         _recipeDataService = recipeDataService;
         _categoryDataService = categoryDataService;

@@ -22,8 +22,8 @@ public static class MauiProgram
 		// Register services
 		builder.Services.AddSingleton<ILanguagePreferenceService, LanguagePreferenceService>();
 		builder.Services.AddSingleton<LanguageService>();
-		builder.Services.AddSingleton<RecipeDataService>();
-		builder.Services.AddSingleton<CategoryDataService>();
+		builder.Services.AddSingleton<IRecipeDataService, RecipeDataService>();
+		builder.Services.AddSingleton<ICategoryDataService, CategoryDataService>();
 
 		// Register ViewModels
 		builder.Services.AddSingleton<AppShellViewModel>();

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RecipeApp.ApiService.Data;
-using RecipeApp.ApiService.Models;
+using RecipeApp.Models;
+using System.Text.Json;
 
 namespace RecipeApp.ApiService.Services;
 
@@ -129,5 +130,23 @@ public class CategoryService : ICategoryService
     public async Task<bool> CategoryHasRecipesAsync(Guid id)
     {
         return await _context.Recipes.AnyAsync(r => r.CategoryId == id);
+    }
+
+    /// <summary>
+    /// Exports all categories as JSON for mobile app consumption
+    /// </summary>
+    /// <returns>JSON string containing all categories</returns>
+    public async Task<string> ExportCategoriesAsJsonAsync()
+    {
+        var categories = await _context.Categories.ToListAsync();
+
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+
+        return JsonSerializer.Serialize(categories, options);
     }
 }

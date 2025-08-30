@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RecipeApp.ServiceDefaults\RecipeApp.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\RecipeApp.Models\RecipeApp.Models.csproj" />
   </ItemGroup>
 
 </Project>

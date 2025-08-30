@@ -1,0 +1,47 @@
+[
+  {
+    "id": "dc9a92a1-f284-41ac-9a38-11dac41b62b8",
+    "name": {
+      "english": "Appetizers",
+      "vietnamese": "Món khai vị"
+    },
+    "imageFileName": "appetizers.jpg",
+    "recipes": []
+  },
+  {
+    "id": "c444b2e3-378a-40e2-998e-2f90c32b30e1",
+    "name": {
+      "english": "Salads",
+      "vietnamese": "Món salad"
+    },
+    "imageFileName": "salads.jpg",
+    "recipes": []
+  },
+  {
+    "id": "924a1412-a82e-43ff-b0e1-336604e0ccfe",
+    "name": {
+      "english": "Beverages",
+      "vietnamese": "Đồ uống"
+    },
+    "imageFileName": "beverages.jpg",
+    "recipes": []
+  },
+  {
+    "id": "c250d657-f8e0-473a-8ccd-a17c42e2712b",
+    "name": {
+      "english": "Desserts",
+      "vietnamese": "Món tráng miệng"
+    },
+    "imageFileName": "desserts.jpg",
+    "recipes": []
+  },
+  {
+    "id": "65a59101-fe7e-4a61-a10f-e8ccd67614c6",
+    "name": {
+      "english": "Main Courses",
+      "vietnamese": "Món chính"
+    },
+    "imageFileName": "maincourses.jpg",
+    "recipes": []
+  }
+]

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using RecipeApp.ApiService.Models;
+using RecipeApp.Models;
 using RecipeApp.ApiService.Models.DTOs;
 using RecipeApp.ApiService.Services;
 

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using RecipeApp.ApiService.Models;
+using RecipeApp.Models;
 using RecipeApp.ApiService.Services;
 
 namespace RecipeApp.ApiService.Controllers;
@@ -118,5 +118,28 @@ public class CategoriesController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    /// <summary>
+    /// Exports all categories as JSON for mobile app consumption
+    /// </summary>
+    /// <returns>JSON file download containing all categories</returns>
+    [HttpGet("export")]
+    public async Task<IActionResult> ExportCategories()
+    {
+        try
+        {
+            var jsonString = await _categoryService.ExportCategoriesAsJsonAsync();
+
+            // Return as downloadable file
+            var bytes = System.Text.Encoding.UTF8.GetBytes(jsonString);
+            var fileName = $"categories_{DateTime.UtcNow:yyyyMMdd_HHmmss}.json";
+
+            return File(bytes, "application/json", fileName);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error exporting categories: {ex.Message}");
+        }
     }
 }

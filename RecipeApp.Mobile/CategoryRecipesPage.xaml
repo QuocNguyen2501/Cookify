@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:RecipeApp.Mobile.ViewModels"
+             xmlns:models="clr-namespace:RecipeApp.Models;assembly=RecipeApp.Models"
+             xmlns:converters="clr-namespace:RecipeApp.Mobile.Converters"
+             x:Class="RecipeApp.Mobile.CategoryRecipesPage"
+             Title="{Binding Title}"
+             x:DataType="viewModels:CategoryRecipesViewModel">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ImageFileNameToSourceConverter x:Key="ImageConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Recipe List -->
+        <RefreshView Grid.Row="0" IsRefreshing="{Binding IsBusy}" x:DataType="viewModels:CategoryRecipesViewModel">
+            <CollectionView ItemsSource="{Binding FilteredRecipes}"
+                           SelectionMode="None"
+                           x:DataType="viewModels:CategoryRecipesViewModel">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Recipe">
+                        <Grid Margin="15,10">
+                            <Frame BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray900}}"
+                                   CornerRadius="10"
+                                   HasShadow="True"
+                                   Padding="15">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:CategoryRecipesViewModel}}, Path=GoToRecipeDetailCommand}"
+                                                         CommandParameter="{Binding .}" />
+                                </Frame.GestureRecognizers>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Recipe Image -->
+                                    <Image Grid.Column="0"
+                                           Source="{Binding ImageFileName, Converter={StaticResource ImageConverter}}"
+                                           Aspect="AspectFill"
+                                           HeightRequest="80"
+                                           WidthRequest="80" />
+
+                                    <!-- Recipe Details -->
+                                    <StackLayout Grid.Column="1" Margin="15,0,0,0">
+                                        <Label Text="{Binding Name.English}" 
+                                               FontSize="18" 
+                                               FontAttributes="Bold" 
+                                               LineBreakMode="TailTruncation" />
+                                        
+                                        <Label Text="{Binding Description.English}" 
+                                               FontSize="12" 
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="2" />
+                                        
+                                        <Label FontSize="11" 
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Prep: " />
+                                                    <Span Text="{Binding PrepTime}" />
+                                                    <Span Text=" | Cook: " />
+                                                    <Span Text="{Binding CookTime}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.EmptyView>
+                    <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                        <Label Text="No recipes found in this category" 
+                               FontSize="18" 
+                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
+                               HorizontalOptions="Center" />
+                        <Label Text="Try adjusting your search or check other categories" 
+                               FontSize="14" 
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                               HorizontalOptions="Center" />
+                    </StackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- Banner Ad Placeholder -->
+        <Frame Grid.Row="1" 
+           BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}" 
+           HeightRequest="50" 
+           Margin="0"
+           CornerRadius="0"
+           HasShadow="False">
+            <Label Text="Banner Ad Placeholder" 
+               FontSize="12" 
+               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
+               HorizontalOptions="Center" 
+               VerticalOptions="Center" />
+        </Frame>
+    </Grid>
+</ContentPage>

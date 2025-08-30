@@ -1,4 +1,4 @@
-using RecipeApp.ApiService.Models;
+using RecipeApp.Models;
 
 namespace RecipeApp.ApiService.Services;
 

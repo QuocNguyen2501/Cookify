@@ -1,6 +1,7 @@
 @page "/category/new"
 @page "/category/edit/{Id:guid}"
-@using RecipePortal.WebApp.Models
+@rendermode InteractiveServer
+@using RecipeApp.Models
 @inject HttpClient HttpClient
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
@@ -41,24 +42,57 @@
                                placeholder="Nhập tên danh mục bằng tiếng Việt" />
                     <ValidationMessage For="@(() => category.Name.Vietnamese)" class="text-red-600 text-sm mt-1" />
                 </div>
+
+                <!-- Category Image -->
+                <div>
+                    <label for="imageFileName" class="block text-sm font-medium text-gray-700 mb-2">
+                        Category Image (File Name)
+                    </label>
+                    <InputText id="imageFileName" 
+                               @bind-Value="category.ImageFileName" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                               placeholder="e.g., appetizers.jpg" />
+                    <p class="text-sm text-gray-500 mt-1">
+                        Enter the filename of the image (e.g., appetizers.jpg). Images should be placed in /wwwroot/images/categories/
+                    </p>
+                    @if (!string.IsNullOrEmpty(category.ImageFileName))
+                    {
+                        <div class="mt-2">
+                            <img src="/images/categories/@category.ImageFileName" 
+                                 alt="@category.Name.English" 
+                                 class="w-24 h-24 object-cover rounded-lg border border-gray-300"
+                                 onerror="this.src='/images/placeholder-category.png'" />
+                        </div>
+                    }
+                </div>
             </div>
 
             <!-- Action Buttons -->
             <div class="flex justify-end gap-4 mt-8">
                 <button type="button" 
                         @onclick="Cancel"
-                        class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
                     Cancel
                 </button>
                 <button type="submit" 
                         disabled="@isSubmitting"
-                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
                     @if (isSubmitting)
                     {
+                        <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
                         <span>Saving...</span>
                     }
                     else
                     {
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                        </svg>
                         <span>@(Id == Guid.Empty ? "Create Category" : "Update Category")</span>
                     }
                 </button>
@@ -70,7 +104,8 @@
 @code {
     [Parameter] public Guid Id { get; set; }
 
-    private Category category = new();
+    [SupplyParameterFromForm]
+    private Category category { get; set; } = new();
     private bool isSubmitting = false;
 
     protected override async Task OnInitializedAsync()

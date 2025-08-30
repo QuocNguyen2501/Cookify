@@ -3,7 +3,9 @@
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:RecipeApp.Mobile.Converters"
-             Title="{Binding Recipe.Name}">
+             xmlns:viewModels="clr-namespace:RecipeApp.Mobile.ViewModels"
+             Title="{Binding Title}"
+             x:DataType="viewModels:RecipeDetailViewModel">
     
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -15,42 +17,56 @@
         <StackLayout Padding="16" Spacing="16">
             
             <!-- Recipe Image -->
-            <Image Source="{Binding Recipe.ImageFileName, Converter={StaticResource ImageConverter}}"
+            <Image Source="{Binding CurrentRecipe.ImageFileName, Converter={StaticResource ImageConverter}}"
                    Aspect="AspectFill"
                    HeightRequest="200"
                    HorizontalOptions="FillAndExpand"
-                   BackgroundColor="LightGray" />
+                   BackgroundColor="LightGray"
+                   x:DataType="viewModels:RecipeDetailViewModel" />
 
             <!-- Recipe Name -->
-            <Label Text="{Binding Recipe.Name}"
+            <Label Text="{Binding DisplayName}"
                    FontSize="24"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
-                   TextColor="Black" />
+                   TextColor="Black"
+                   x:DataType="viewModels:RecipeDetailViewModel" />
 
             <!-- Recipe Description -->
-            <Label Text="{Binding Recipe.Description}"
+            <Label Text="{Binding DisplayDescription}"
                    FontSize="16"
                    TextColor="Gray"
                    HorizontalOptions="Center"
-                   HorizontalTextAlignment="Center" />
+                   HorizontalTextAlignment="Center"
+                   x:DataType="viewModels:RecipeDetailViewModel" />
 
-            <!-- Cooking Time and Difficulty -->
+            <!-- Cooking Time Info -->
             <Grid ColumnDefinitions="*,*" RowDefinitions="Auto" Margin="0,16,0,0">
                 <StackLayout Grid.Column="0" HorizontalOptions="Center">
-                    <Label Text="🕒 Cooking Time" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
-                    <Label Text="{Binding Recipe.CookingTimeMinutes, StringFormat='{0} min'}" 
+                    <Label Text="⏱️ Prep Time" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label Text="{Binding CurrentRecipe.PrepTime}" 
                            FontSize="16" 
-                           HorizontalOptions="Center" />
+                           HorizontalOptions="Center"
+                           x:DataType="viewModels:RecipeDetailViewModel" />
                 </StackLayout>
                 
                 <StackLayout Grid.Column="1" HorizontalOptions="Center">
-                    <Label Text="📊 Difficulty" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
-                    <Label Text="{Binding Recipe.DifficultyLevel}" 
+                    <Label Text="� Cook Time" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label Text="{Binding CurrentRecipe.CookTime}" 
                            FontSize="16" 
-                           HorizontalOptions="Center" />
+                           HorizontalOptions="Center"
+                           x:DataType="viewModels:RecipeDetailViewModel" />
                 </StackLayout>
             </Grid>
+
+            <!-- Category -->
+            <StackLayout HorizontalOptions="Center" Margin="0,8,0,0">
+                <Label Text="📂 Category" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                <Label Text="{Binding DisplayCategoryName}" 
+                       FontSize="16" 
+                       HorizontalOptions="Center"
+                       x:DataType="viewModels:RecipeDetailViewModel" />
+            </StackLayout>
 
             <!-- Ingredients Section -->
             <Label Text="🥘 Ingredients" 
@@ -59,10 +75,11 @@
                    Margin="0,24,0,8"
                    TextColor="Black" />
             
-            <CollectionView ItemsSource="{Binding Recipe.Ingredients}" 
-                          BackgroundColor="Transparent">
+            <CollectionView ItemsSource="{Binding DisplayIngredients}" 
+                          BackgroundColor="Transparent"
+                          x:DataType="viewModels:RecipeDetailViewModel">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="x:String">
                         <Grid ColumnDefinitions="Auto,*" 
                               Padding="8" 
                               RowSpacing="4">
@@ -76,7 +93,8 @@
                                  Text="{Binding .}" 
                                  FontSize="16" 
                                  VerticalOptions="Center"
-                                 TextColor="Black" />
+                                 TextColor="Black"
+                                 x:DataType="x:String" />
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -89,51 +107,24 @@
                    Margin="0,24,0,8"
                    TextColor="Black" />
             
-            <CollectionView ItemsSource="{Binding InstructionsWithNumbers}" 
-                          BackgroundColor="Transparent">
+            <CollectionView ItemsSource="{Binding DisplayInstructions}" 
+                          BackgroundColor="Transparent"
+                          x:DataType="viewModels:RecipeDetailViewModel">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid ColumnDefinitions="Auto,*" 
+                    <DataTemplate x:DataType="x:String">
+                        <Grid ColumnDefinitions="*" 
                               Padding="8,12" 
                               RowSpacing="4">
-                            <Frame Grid.Column="0" 
-                                 WidthRequest="24" 
-                                 HeightRequest="24" 
-                                 CornerRadius="12" 
-                                 BackgroundColor="DodgerBlue" 
-                                 Padding="0" 
-                                 VerticalOptions="Start" 
-                                 Margin="0,0,12,0">
-                                <Label Text="{Binding Number}" 
-                                     FontSize="12" 
-                                     FontAttributes="Bold" 
-                                     TextColor="White" 
-                                     HorizontalOptions="Center" 
-                                     VerticalOptions="Center" />
-                            </Frame>
-                            <Label Grid.Column="1" 
-                                 Text="{Binding Instruction}" 
+                            <Label Grid.Column="0" 
+                                 Text="{Binding .}" 
                                  FontSize="16" 
                                  VerticalOptions="Center"
-                                 TextColor="Black" />
+                                 TextColor="Black"
+                                 x:DataType="x:String" />
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-
-            <!-- Banner Ad Placeholder -->
-            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
-                   BorderColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
-                   HeightRequest="50"
-                   Margin="0,16,0,0"
-                   CornerRadius="0"
-                   HasShadow="False">
-                <Label Text="Banner Ad Placeholder" 
-                       FontSize="12" 
-                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
-                       HorizontalOptions="Center" 
-                       VerticalOptions="Center" />
-            </Frame>
             
         </StackLayout>
     </ScrollView>

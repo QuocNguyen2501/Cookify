@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RecipeApp.ApiService.Data;
-using RecipeApp.ApiService.Models;
+using RecipeApp.Models;
 using RecipeApp.ApiService.Models.DTOs;
 using System.Text.Json;
 using System.Text.Json.Serialization;

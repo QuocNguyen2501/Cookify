@@ -4,7 +4,17 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:RecipeApp.Mobile"
+    xmlns:viewmodels="clr-namespace:RecipeApp.Mobile.ViewModels"
+    x:DataType="viewmodels:AppShellViewModel"
     Shell.FlyoutBehavior="Disabled">
+
+    <Shell.ToolbarItems>
+        <ToolbarItem 
+            Text="🌐" 
+            Order="Primary" 
+            Priority="0"  
+            Command="{Binding ShowLanguagePopupCommand}" />
+    </Shell.ToolbarItems>
 
     <ShellContent
         Title="Home"

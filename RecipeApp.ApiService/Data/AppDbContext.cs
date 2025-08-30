@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using RecipeApp.ApiService.Models;
+using RecipeApp.Models;
 using System.Text.Json;
 
 namespace RecipeApp.ApiService.Data;

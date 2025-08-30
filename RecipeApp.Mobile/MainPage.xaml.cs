@@ -7,20 +7,11 @@ public partial class MainPage : ContentPage
 {
     private readonly LanguageService _languageService;
 
-    public MainPage(MainViewModel viewModel)
+    public MainPage(MainViewModel viewModel, LanguageService languageService)
     {
         InitializeComponent();
         BindingContext = viewModel;
-        _languageService = LanguageService.Instance;
-    }
-
-    private void OnSearchClicked(object sender, EventArgs e)
-    {
-        SearchBar.IsVisible = !SearchBar.IsVisible;
-        if (SearchBar.IsVisible)
-        {
-            SearchBar.Focus();
-        }
+        _languageService = languageService;
     }
 
     private async void OnLanguageClicked(object sender, EventArgs e)

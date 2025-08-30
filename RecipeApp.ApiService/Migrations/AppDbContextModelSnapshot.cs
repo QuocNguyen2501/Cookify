@@ -22,11 +22,15 @@ namespace RecipeApp.ApiService.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("RecipeApp.ApiService.Models.Category", b =>
+            modelBuilder.Entity("RecipeApp.Models.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ImageFileName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -40,7 +44,7 @@ namespace RecipeApp.ApiService.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("RecipeApp.ApiService.Models.Recipe", b =>
+            modelBuilder.Entity("RecipeApp.Models.Recipe", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,14 +55,16 @@ namespace RecipeApp.ApiService.Migrations
 
                     b.Property<string>("CookTime")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageFileName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Ingredients")
                         .IsRequired()
@@ -74,7 +80,8 @@ namespace RecipeApp.ApiService.Migrations
 
                     b.Property<string>("PrepTime")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -83,9 +90,9 @@ namespace RecipeApp.ApiService.Migrations
                     b.ToTable("Recipes");
                 });
 
-            modelBuilder.Entity("RecipeApp.ApiService.Models.Recipe", b =>
+            modelBuilder.Entity("RecipeApp.Models.Recipe", b =>
                 {
-                    b.HasOne("RecipeApp.ApiService.Models.Category", "Category")
+                    b.HasOne("RecipeApp.Models.Category", "Category")
                         .WithMany("Recipes")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -94,7 +101,7 @@ namespace RecipeApp.ApiService.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("RecipeApp.ApiService.Models.Category", b =>
+            modelBuilder.Entity("RecipeApp.Models.Category", b =>
                 {
                     b.Navigation("Recipes");
                 });

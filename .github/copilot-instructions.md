@@ -2,11 +2,12 @@
 
 ## 🎯 Project Overview
 
-Cookify is a **multi-language recipe management system** with Vietnamese and English support, built using .NET 9.0 Aspire architecture. This is a **complete, production-ready solution** with three core components:
+Cookify is a **multi-language recipe management system** with Vietnamese and English support, built using .NET 9.0 Aspire architecture. This is a **complete, production-ready solution** with four core components:
 
-1. **RecipeApp.ApiService** - ASP.NET Core Web API with SQL Server database
-2. **RecipePortal.WebApp** - Blazor WebAssembly administrative portal 
-3. **RecipeApp.Mobile** - .NET MAUI cross-platform mobile application
+1. **RecipeApp.Models** - Shared class library containing all data models
+2. **RecipeApp.ApiService** - ASP.NET Core Web API with SQL Server database
+3. **RecipePortal.WebApp** - Blazor WebAssembly administrative portal 
+4. **RecipeApp.Mobile** - .NET MAUI cross-platform mobile application
 
 **Critical Context**: This project is 100% complete and functional. Focus on understanding the existing architecture before making any changes.
 
@@ -19,6 +20,13 @@ Cookify is a **multi-language recipe management system** with Vietnamese and Eng
 - **Service References**: WebApp references ApiService for HTTP communication
 - **Service Defaults**: Shared configuration in `RecipeApp.ServiceDefaults`
 - **Run Command**: Always use `dotnet run --project RecipeApp.AppHost` for development
+
+### Shared Models Architecture
+- **RecipeApp.Models**: Centralized class library containing all data models
+- **Cross-Project Consistency**: Single source of truth for Recipe, Category, and RecipeLocalizedText
+- **Enhanced Models**: Models include validation attributes and helper properties for different usage contexts
+- **Project References**: All projects reference RecipeApp.Models for consistent data structures
+- **No Model Duplication**: Models are maintained in one location and shared across all applications
 
 ### Multi-Language Data Model
 The **core innovation** is `RecipeLocalizedText` class for seamless bilingual support:
@@ -52,10 +60,13 @@ public class RecipeLocalizedText
 ## 🔧 Development Guidelines
 
 ### When Working with Models
+- **Shared Library**: All models are in `RecipeApp.Models` - never duplicate models in individual projects
 - **NEVER** use simple strings for user content - always use `RecipeLocalizedText`
 - **Recipe Properties**: Name, Description, Ingredients[], Instructions[] are all localized
 - **Category Properties**: Name is localized
 - **Data Consistency**: Ensure both English and Vietnamese fields are populated
+- **Form Binding**: Use helper properties (IngredientsTextEnglish/Vietnamese) for web forms
+- **Validation**: Models include comprehensive validation attributes for all usage contexts
 
 ### API Development Patterns
 - **Controllers**: Follow existing patterns in `CategoriesController` and `RecipesController`
@@ -80,11 +91,12 @@ public class RecipeLocalizedText
 
 ### Essential Files to Understand
 ```
+RecipeApp.Models/
+├── Recipe.cs                     # Main recipe entity with form binding helpers
+├── Category.cs                   # Category entity with localization
+└── RecipeLocalizedText.cs        # Core localization model
+
 RecipeApp.ApiService/
-├── Models/
-│   ├── RecipeLocalizedText.cs     # Core localization model
-│   ├── Recipe.cs                  # Main recipe entity
-│   └── Category.cs                # Category entity
 ├── Data/
 │   ├── AppDbContext.cs           # EF Core context with JSON conversions
 │   └── DatabaseSeeder.cs         # Sample data seeding
@@ -135,7 +147,7 @@ RecipeApp.Mobile/
 ## 🔄 Typical Development Workflows
 
 ### Adding New Recipe Fields
-1. Update `Recipe.cs` model with `RecipeLocalizedText` property
+1. Update `Recipe.cs` model in `RecipeApp.Models` with `RecipeLocalizedText` property
 2. Update `AppDbContext.cs` with JSON conversion for the new field
 3. Create and apply EF Core migration for SQL Server
 4. Update API controllers to handle new field
@@ -169,6 +181,7 @@ RecipeApp.Mobile/
 ### Cross-Project Dependencies
 - Mobile app is independent (no direct API calls)
 - WebApp references ApiService via Aspire
+- All projects reference RecipeApp.Models for shared data structures
 - All projects target .NET 9.0
 
 ## 🎨 UI/UX Standards
@@ -248,6 +261,7 @@ dotnet run --project RecipeApp.AppHost
 - **Localization**: Verify both English and Vietnamese content is provided
 - **API Calls**: Confirm Aspire service discovery is working properly
 - **SQL Server Connection**: Ensure SQL Server container is running and retry logic is configured
+- **Shared Models**: Ensure all projects reference RecipeApp.Models correctly
 
 ---
 

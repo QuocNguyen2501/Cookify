@@ -1,4 +1,4 @@
-using RecipeApp.ApiService.Models;
+using RecipeApp.Models;
 
 namespace RecipeApp.ApiService.Services;
 
@@ -55,4 +55,10 @@ public interface ICategoryService
     /// <param name="id">The category ID</param>
     /// <returns>True if category has recipes, false otherwise</returns>
     Task<bool> CategoryHasRecipesAsync(Guid id);
+
+    /// <summary>
+    /// Exports all categories as JSON for mobile app consumption
+    /// </summary>
+    /// <returns>JSON string containing all categories</returns>
+    Task<string> ExportCategoriesAsJsonAsync();
 }

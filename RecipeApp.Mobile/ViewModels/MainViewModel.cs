@@ -1,71 +1,55 @@
-using RecipeApp.Mobile.Models;
+using RecipeApp.Models;
 using RecipeApp.Mobile.Services;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace RecipeApp.Mobile.ViewModels;
 
-public class MainViewModel : BaseViewModel
+/// <summary>
+/// Main view model for the recipe list page using CommunityToolkit.Mvvm
+/// </summary>
+public partial class MainViewModel : BaseViewModel
 {
     private readonly RecipeDataService _recipeDataService;
+    private readonly CategoryDataService _categoryDataService;
     private readonly LanguageService _languageService;
 
     public ObservableCollection<Recipe> Recipes { get; }
     public ObservableCollection<Recipe> FilteredRecipes { get; }
     public ObservableCollection<Category> Categories { get; }
 
-    private string _searchText = string.Empty;
-    private Category? _selectedCategory;
-    private string _currentLanguage = "en";
+    [ObservableProperty]
+    private string searchText = string.Empty;
 
-    public string SearchText
+    [ObservableProperty]
+    private Category? selectedCategory;
+
+    [ObservableProperty]
+    private string currentLanguage = "en";
+
+    [ObservableProperty]
+    private bool isLanguagePopupVisible = false;
+
+    /// <summary>
+    /// Called when CurrentLanguage property changes to update language service
+    /// </summary>
+    partial void OnCurrentLanguageChanged(string value)
     {
-        get => _searchText;
-        set
-        {
-            SetProperty(ref _searchText, value);
-            FilterRecipes();
-        }
+        _languageService.SetLanguage(value);
     }
 
-    public Category? SelectedCategory
+    public MainViewModel(RecipeDataService recipeDataService, CategoryDataService categoryDataService, LanguageService languageService)
     {
-        get => _selectedCategory;
-        set
-        {
-            SetProperty(ref _selectedCategory, value);
-            FilterRecipes();
-        }
-    }
-
-    public string CurrentLanguage
-    {
-        get => _currentLanguage;
-        set
-        {
-            SetProperty(ref _currentLanguage, value);
-            _languageService.SetLanguage(value);
-        }
-    }
-
-    public ICommand SearchCommand { get; }
-    public ICommand GoToRecipeDetailCommand { get; }
-    public ICommand ChangeLanguageCommand { get; }
-
-    public MainViewModel()
-    {
-        _recipeDataService = RecipeDataService.Instance;
-        _languageService = LanguageService.Instance;
+        _recipeDataService = recipeDataService;
+        _categoryDataService = categoryDataService;
+        _languageService = languageService;
 
         Recipes = new ObservableCollection<Recipe>();
         FilteredRecipes = new ObservableCollection<Recipe>();
         Categories = new ObservableCollection<Category>();
 
-        SearchCommand = new Command(() => FilterRecipes());
-        GoToRecipeDetailCommand = new Command<Recipe>(async (recipe) => await GoToRecipeDetail(recipe));
-        ChangeLanguageCommand = new Command<string>((language) => CurrentLanguage = language);
-
-        Title = "Recipe Book";
+        Title = "Select category";
         
         // Subscribe to language changes
         _languageService.LanguageChanged += OnLanguageChanged;
@@ -74,6 +58,72 @@ public class MainViewModel : BaseViewModel
         Task.Run(async () => await LoadData());
     }
 
+    /// <summary>
+    /// Command to change the current language
+    /// </summary>
+    [RelayCommand]
+    private void ChangeLanguage(string? language)
+    {
+        if (!string.IsNullOrEmpty(language))
+        {
+            CurrentLanguage = language;
+        }
+    }
+
+    /// <summary>
+    /// Command to navigate to category recipes page
+    /// </summary>
+    [RelayCommand]
+    private async Task GoToCategory(Category? category)
+    {
+        System.Diagnostics.Debug.WriteLine($"GoToCategory command called with category: {category?.Name?.English}");
+        
+        if (category != null)
+        {
+            System.Diagnostics.Debug.WriteLine($"Navigating to categoryrecipes?categoryId={category.Id}");
+            await Shell.Current.GoToAsync($"categoryrecipes?categoryId={category.Id}");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("Category is null!");
+        }
+    }
+
+    /// <summary>
+    /// Command to show the language selection popup
+    /// </summary>
+    [RelayCommand]
+    private void ShowLanguagePopup()
+    {
+        System.Diagnostics.Debug.WriteLine("ShowLanguagePopup command called");
+        IsLanguagePopupVisible = true;
+    }
+
+    /// <summary>
+    /// Command to close the language selection popup
+    /// </summary>
+    [RelayCommand]
+    private void CloseLanguagePopup()
+    {
+        IsLanguagePopupVisible = false;
+    }
+
+    /// <summary>
+    /// Command to select a language and close the popup
+    /// </summary>
+    [RelayCommand]
+    private void SelectLanguage(string? language)
+    {
+        if (!string.IsNullOrEmpty(language))
+        {
+            CurrentLanguage = language;
+            IsLanguagePopupVisible = false;
+        }
+    }
+
+    /// <summary>
+    /// Loads recipes and categories data asynchronously
+    /// </summary>
     private async Task LoadData()
     {
         try
@@ -81,7 +131,7 @@ public class MainViewModel : BaseViewModel
             IsBusy = true;
 
             var recipes = await _recipeDataService.GetRecipesAsync();
-            var categories = await _recipeDataService.GetCategoriesAsync();
+            var categories = await _categoryDataService.GetCategoriesAsync();
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
@@ -96,9 +146,9 @@ public class MainViewModel : BaseViewModel
                 foreach (var category in categories)
                 {
                     Categories.Add(category);
+                    // Debug logging
+                    System.Diagnostics.Debug.WriteLine($"Loaded category: {category.Name.English}, ImageFileName: {category.ImageFileName}");
                 }
-
-                FilterRecipes();
             });
         }
         catch (Exception ex)
@@ -111,45 +161,11 @@ public class MainViewModel : BaseViewModel
         }
     }
 
-    private void FilterRecipes()
-    {
-        var filtered = Recipes.AsEnumerable();
-
-        // Filter by search text
-        if (!string.IsNullOrWhiteSpace(SearchText))
-        {
-            filtered = filtered.Where(r =>
-                r.Name.GetLocalizedText(CurrentLanguage).Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                r.Ingredients.Any(i => i.GetLocalizedText(CurrentLanguage).Contains(SearchText, StringComparison.OrdinalIgnoreCase)));
-        }
-
-        // Filter by category
-        if (SelectedCategory != null)
-        {
-            filtered = filtered.Where(r => r.CategoryId == SelectedCategory.Id);
-        }
-
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            FilteredRecipes.Clear();
-            foreach (var recipe in filtered)
-            {
-                FilteredRecipes.Add(recipe);
-            }
-        });
-    }
-
-    private async Task GoToRecipeDetail(Recipe recipe)
-    {
-        if (recipe != null)
-        {
-            await Shell.Current.GoToAsync($"recipedetail?id={recipe.Id}");
-        }
-    }
-
+    /// <summary>
+    /// Handles language change events from the language service
+    /// </summary>
     private void OnLanguageChanged(string newLanguage)
     {
         CurrentLanguage = newLanguage;
-        FilterRecipes(); // Re-filter with new language
     }
 }

@@ -4,12 +4,15 @@
              xmlns:viewModels="clr-namespace:RecipeApp.Mobile.ViewModels"
              xmlns:models="clr-namespace:RecipeApp.Models;assembly=RecipeApp.Models"
              xmlns:converters="clr-namespace:RecipeApp.Mobile.Converters"
+             xmlns:strings="clr-namespace:RecipeApp.Mobile.Resources.Strings"
              x:Class="RecipeApp.Mobile.CategoryRecipesPage"
              Title="{Binding Title}"
              x:DataType="viewModels:CategoryRecipesViewModel">
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <converters:LanguageConverter x:Key="LanguageConverter" />
+            <converters:StaticResourceConverter x:Key="StaticResourceConverter" />
             <converters:ImageFileNameToSourceConverter x:Key="ImageConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
@@ -52,12 +55,12 @@
 
                                     <!-- Recipe Details -->
                                     <StackLayout Grid.Column="1" Margin="15,0,0,0">
-                                        <Label Text="{Binding Name.English}" 
+                                        <Label Text="{Binding Name, Converter={StaticResource LanguageConverter}}" 
                                                FontSize="18" 
                                                FontAttributes="Bold" 
                                                LineBreakMode="TailTruncation" />
-                                        
-                                        <Label Text="{Binding Description.English}" 
+
+                                        <Label Text="{Binding Description, Converter={StaticResource LanguageConverter}}" 
                                                FontSize="12" 
                                                TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
                                                LineBreakMode="TailTruncation"
@@ -67,9 +70,14 @@
                                                TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}">
                                             <Label.FormattedText>
                                                 <FormattedString>
-                                                    <Span Text="Prep: " />
+                                                    <Span Text="{Binding Source={x:Static strings:AppResources.Prep}, 
+                                                                  Converter={StaticResource StaticResourceConverter}}" />
+                                                    <Span Text=": " />
                                                     <Span Text="{Binding PrepTime}" />
-                                                    <Span Text=" | Cook: " />
+                                                    <Span Text=" | " />
+                                                    <Span Text="{Binding Source={x:Static strings:AppResources.Cook}, 
+                                                                  Converter={StaticResource StaticResourceConverter}}" />
+                                                    <Span Text=": " />
                                                     <Span Text="{Binding CookTime}" />
                                                 </FormattedString>
                                             </Label.FormattedText>
@@ -83,11 +91,13 @@
 
                 <CollectionView.EmptyView>
                     <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                        <Label Text="No recipes found in this category" 
+                        <Label Text="{Binding Source={x:Static strings:AppResources.NoRecipesFound}, 
+                                      Converter={StaticResource StaticResourceConverter}}" 
                                FontSize="18" 
                                TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
                                HorizontalOptions="Center" />
-                        <Label Text="Try adjusting your search or check other categories" 
+                        <Label Text="{Binding Source={x:Static strings:AppResources.TryAdjustingSearch}, 
+                                      Converter={StaticResource StaticResourceConverter}}" 
                                FontSize="14" 
                                TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                HorizontalOptions="Center" />
@@ -103,7 +113,8 @@
            Margin="0"
            CornerRadius="0"
            HasShadow="False">
-            <Label Text="Banner Ad Placeholder" 
+            <Label Text="{Binding Source={x:Static strings:AppResources.BannerAdPlaceholder}, 
+                          Converter={StaticResource StaticResourceConverter}}" 
                FontSize="12" 
                TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
                HorizontalOptions="Center" 

@@ -1,5 +1,7 @@
 using System.Globalization;
+using System.Resources;
 using RecipeApp.Models;
+using RecipeApp.Mobile.Services;
 
 namespace RecipeApp.Mobile.Converters;
 
@@ -9,9 +11,43 @@ public class LanguageConverter : IValueConverter
     {
         if (value is RecipeLocalizedText localizedText)
         {
-            // For now, default to English. In a full implementation, 
-            // this would check the current language from LanguageService
-            return localizedText.English;
+            // Get the current language from the service locator
+            var languageService = Application.Current?.Handler?.MauiContext?.Services?.GetService<LanguageService>();
+            var currentLanguage = languageService?.CurrentLanguage ?? "en";
+            return localizedText.GetLocalizedText(currentLanguage);
+        }
+        return value?.ToString() ?? string.Empty;
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class StaticResourceConverter : IValueConverter
+{
+    private static readonly ResourceManager ResourceManager = new("RecipeApp.Mobile.Resources.Strings.AppResources", typeof(StaticResourceConverter).Assembly);
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is string resourceKey && !string.IsNullOrWhiteSpace(resourceKey))
+        {
+            // Get the current language from the service locator
+            var languageService = Application.Current?.Handler?.MauiContext?.Services?.GetService<LanguageService>();
+            var currentLanguage = languageService?.CurrentLanguage ?? "en";
+            
+            try
+            {
+                var cultureInfo = new CultureInfo(currentLanguage);
+                var localizedValue = ResourceManager.GetString(resourceKey, cultureInfo);
+                return localizedValue ?? resourceKey; // Fallback to key if translation not found
+            }
+            catch (Exception)
+            {
+                // Fallback to key if any error occurs
+                return resourceKey;
+            }
         }
         return value?.ToString() ?? string.Empty;
     }

@@ -4,12 +4,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:RecipeApp.Mobile.Converters"
              xmlns:viewModels="clr-namespace:RecipeApp.Mobile.ViewModels"
+             xmlns:strings="clr-namespace:RecipeApp.Mobile.Resources.Strings"
              Title="{Binding Title}"
              x:DataType="viewModels:RecipeDetailViewModel">
     
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:ImageFileNameToSourceConverter x:Key="ImageConverter" />
+            <converters:StaticResourceConverter x:Key="StaticResourceConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -43,7 +45,9 @@
             <!-- Cooking Time Info -->
             <Grid ColumnDefinitions="*,*" RowDefinitions="Auto" Margin="0,16,0,0">
                 <StackLayout Grid.Column="0" HorizontalOptions="Center">
-                    <Label Text="⏱️ Prep Time" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label Text="{Binding Source={x:Static strings:AppResources.PrepTime}, 
+                                  Converter={StaticResource StaticResourceConverter}}" 
+                           FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
                     <Label Text="{Binding CurrentRecipe.PrepTime}" 
                            FontSize="16" 
                            HorizontalOptions="Center"
@@ -51,7 +55,9 @@
                 </StackLayout>
                 
                 <StackLayout Grid.Column="1" HorizontalOptions="Center">
-                    <Label Text="� Cook Time" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label Text="{Binding Source={x:Static strings:AppResources.CookTime}, 
+                                  Converter={StaticResource StaticResourceConverter}}" 
+                           FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
                     <Label Text="{Binding CurrentRecipe.CookTime}" 
                            FontSize="16" 
                            HorizontalOptions="Center"
@@ -61,7 +67,9 @@
 
             <!-- Category -->
             <StackLayout HorizontalOptions="Center" Margin="0,8,0,0">
-                <Label Text="📂 Category" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                <Label Text="{Binding Source={x:Static strings:AppResources.Category}, 
+                              Converter={StaticResource StaticResourceConverter}}" 
+                       FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
                 <Label Text="{Binding DisplayCategoryName}" 
                        FontSize="16" 
                        HorizontalOptions="Center"
@@ -69,7 +77,8 @@
             </StackLayout>
 
             <!-- Ingredients Section -->
-            <Label Text="🥘 Ingredients" 
+            <Label Text="{Binding Source={x:Static strings:AppResources.Ingredients}, 
+                          Converter={StaticResource StaticResourceConverter}}" 
                    FontSize="20" 
                    FontAttributes="Bold" 
                    Margin="0,24,0,8"
@@ -101,7 +110,8 @@
             </CollectionView>
 
             <!-- Instructions Section -->
-            <Label Text="📝 Instructions" 
+            <Label Text="{Binding Source={x:Static strings:AppResources.Instructions}, 
+                          Converter={StaticResource StaticResourceConverter}}" 
                    FontSize="20" 
                    FontAttributes="Bold" 
                    Margin="0,24,0,8"

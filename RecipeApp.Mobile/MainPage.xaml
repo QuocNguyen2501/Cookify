@@ -4,6 +4,7 @@
              xmlns:viewModels="clr-namespace:RecipeApp.Mobile.ViewModels"
              xmlns:models="clr-namespace:RecipeApp.Models;assembly=RecipeApp.Models"
              xmlns:converters="clr-namespace:RecipeApp.Mobile.Converters"
+             xmlns:strings="clr-namespace:RecipeApp.Mobile.Resources.Strings"
              x:Class="RecipeApp.Mobile.MainPage"
              x:Name="mainPage"
              Title="{Binding Title}">
@@ -12,6 +13,7 @@
         <ResourceDictionary>
             <converters:ImageFileNameToSourceConverter x:Key="ImageConverter" />
             <converters:LanguageConverter x:Key="LanguageConverter" />
+            <converters:StaticResourceConverter x:Key="StaticResourceConverter" />
             <converters:LanguageToColorConverter x:Key="LanguageToColorConverter" />
             <converters:LanguageToVisibilityConverter x:Key="LanguageToVisibilityConverter" />
         </ResourceDictionary>
@@ -74,11 +76,13 @@
 
                 <CollectionView.EmptyView>
                     <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                        <Label Text="No categories found" 
+                        <Label Text="{Binding Source={x:Static strings:AppResources.NoCategoriesFound}, 
+                                      Converter={StaticResource StaticResourceConverter}}" 
                                FontSize="18" 
                                TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
                                HorizontalOptions="Center" />
-                        <Label Text="Try refreshing or check your connection" 
+                        <Label Text="{Binding Source={x:Static strings:AppResources.TryRefreshing}, 
+                                      Converter={StaticResource StaticResourceConverter}}" 
                                FontSize="14" 
                                TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                HorizontalOptions="Center" />
@@ -94,7 +98,8 @@
                Margin="0"
                CornerRadius="0"
                HasShadow="False">
-            <Label Text="Banner Ad Placeholder" 
+            <Label Text="{Binding Source={x:Static strings:AppResources.BannerAdPlaceholder}, 
+                          Converter={StaticResource StaticResourceConverter}}" 
                    FontSize="12" 
                    TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
                    HorizontalOptions="Center" 

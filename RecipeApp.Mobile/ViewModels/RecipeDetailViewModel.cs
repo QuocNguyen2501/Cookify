@@ -1,5 +1,6 @@
 using RecipeApp.Models;
 using RecipeApp.Mobile.Services;
+using RecipeApp.Mobile.Resources.Strings;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -9,7 +10,7 @@ namespace RecipeApp.Mobile.ViewModels;
 /// View model for recipe detail page using CommunityToolkit.Mvvm
 /// </summary>
 [QueryProperty(nameof(RecipeId), "id")]
-public partial class RecipeDetailViewModel : BaseViewModel
+public partial class RecipeDetailViewModel : BaseViewModel, IDisposable
 {
     private readonly RecipeDataService _recipeDataService;
     private readonly LanguageService _languageService;
@@ -121,5 +122,13 @@ public partial class RecipeDetailViewModel : BaseViewModel
     private void OnLanguageChanged(string newLanguage)
     {
         CurrentLanguage = newLanguage;
+    }
+
+    /// <summary>
+    /// Disposes of resources and unsubscribes from events
+    /// </summary>
+    public void Dispose()
+    {
+        _languageService.LanguageChanged -= OnLanguageChanged;
     }
 }

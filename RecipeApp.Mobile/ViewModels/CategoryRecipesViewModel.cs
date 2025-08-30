@@ -1,5 +1,6 @@
 using RecipeApp.Models;
 using RecipeApp.Mobile.Services;
+using RecipeApp.Mobile.Resources.Strings;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,7 +11,7 @@ namespace RecipeApp.Mobile.ViewModels;
 /// View model for displaying recipes in a specific category using CommunityToolkit.Mvvm
 /// </summary>
 [QueryProperty(nameof(CategoryId), "categoryId")]
-public partial class CategoryRecipesViewModel : BaseViewModel
+public partial class CategoryRecipesViewModel : BaseViewModel, IDisposable
 {
     private readonly RecipeDataService _recipeDataService;
     private readonly CategoryDataService _categoryDataService;
@@ -187,5 +188,21 @@ public partial class CategoryRecipesViewModel : BaseViewModel
     private void OnLanguageChanged(string newLanguage)
     {
         CurrentLanguage = newLanguage;
+        
+        // Force UI refresh by triggering property change notifications
+        // This is needed because converters don't automatically re-evaluate when language changes
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            // Trigger refresh of the FilteredRecipes collection to update the converter bindings
+            FilterRecipes();
+        });
+    }
+
+    /// <summary>
+    /// Disposes of resources and unsubscribes from events
+    /// </summary>
+    public void Dispose()
+    {
+        _languageService.LanguageChanged -= OnLanguageChanged;
     }
 }

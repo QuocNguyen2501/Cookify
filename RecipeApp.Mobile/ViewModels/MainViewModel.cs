@@ -1,5 +1,6 @@
 using RecipeApp.Models;
 using RecipeApp.Mobile.Services;
+using RecipeApp.Mobile.Resources.Strings;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,7 +10,7 @@ namespace RecipeApp.Mobile.ViewModels;
 /// <summary>
 /// Main view model for the recipe list page using CommunityToolkit.Mvvm
 /// </summary>
-public partial class MainViewModel : BaseViewModel
+public partial class MainViewModel : BaseViewModel, IDisposable
 {
     private readonly RecipeDataService _recipeDataService;
     private readonly CategoryDataService _categoryDataService;
@@ -49,13 +50,30 @@ public partial class MainViewModel : BaseViewModel
         FilteredRecipes = new ObservableCollection<Recipe>();
         Categories = new ObservableCollection<Category>();
 
-        Title = "Select category";
+        UpdateLocalizedTitle();
         
         // Subscribe to language changes
         _languageService.LanguageChanged += OnLanguageChanged;
         CurrentLanguage = _languageService.CurrentLanguage;
 
         Task.Run(async () => await LoadData());
+    }
+
+    /// <summary>
+    /// Updates the localized title based on current language
+    /// </summary>
+    private void UpdateLocalizedTitle()
+    {
+        try
+        {
+            var resourceManager = AppResources.ResourceManager;
+            var cultureInfo = new System.Globalization.CultureInfo(CurrentLanguage);
+            Title = resourceManager.GetString("SelectCategory", cultureInfo) ?? "Select category";
+        }
+        catch
+        {
+            Title = "Select category"; // Fallback
+        }
     }
 
     /// <summary>
@@ -167,5 +185,29 @@ public partial class MainViewModel : BaseViewModel
     private void OnLanguageChanged(string newLanguage)
     {
         CurrentLanguage = newLanguage;
+        
+        // Update the localized title
+        UpdateLocalizedTitle();
+        
+        // Force UI refresh by triggering property change notifications
+        // This is needed because converters don't automatically re-evaluate when language changes
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            // Trigger refresh of the Categories collection to update the converter bindings
+            var tempCategories = Categories.ToList();
+            Categories.Clear();
+            foreach (var category in tempCategories)
+            {
+                Categories.Add(category);
+            }
+        });
+    }
+
+    /// <summary>
+    /// Disposes of resources and unsubscribes from events
+    /// </summary>
+    public void Dispose()
+    {
+        _languageService.LanguageChanged -= OnLanguageChanged;
     }
 }

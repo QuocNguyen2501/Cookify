@@ -5,6 +5,7 @@
              xmlns:models="clr-namespace:RecipeApp.Models;assembly=RecipeApp.Models"
              xmlns:converters="clr-namespace:RecipeApp.Mobile.Converters"
              xmlns:strings="clr-namespace:RecipeApp.Mobile.Resources.Strings"
+             xmlns:admob="clr-namespace:Plugin.MauiMTAdmob.Controls;assembly=Plugin.MauiMTAdmob"
              x:Class="RecipeApp.Mobile.CategoryRecipesPage"
              Title="{Binding Title}">
 
@@ -104,18 +105,11 @@
             </CollectionView>
         </RefreshView>
 
-        <!-- Banner Ad Placeholder -->
-        <Border Grid.Row="1" 
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}" 
-                HeightRequest="50" 
-                Margin="0"
-                StrokeShape="Rectangle">
-            <Label Text="{Binding Source={x:Static strings:AppResources.BannerAdPlaceholder}, 
-                          Converter={StaticResource StaticResourceConverter}}" 
-                   FontSize="12" 
-                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
-                   HorizontalOptions="Center" 
-                   VerticalOptions="Center" />
-        </Border>
+        <!-- AdMob Banner Ad -->
+        <admob:MTAdView Grid.Row="1" 
+                        AdsId="ca-app-pub-2462813848027079/5189470585"
+                        HeightRequest="50"
+                        VerticalOptions="End"
+                        HorizontalOptions="Fill" />
     </Grid>
 </ContentPage>

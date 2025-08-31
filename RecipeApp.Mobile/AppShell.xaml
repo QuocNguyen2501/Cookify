@@ -5,15 +5,29 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:RecipeApp.Mobile"
     xmlns:viewmodels="clr-namespace:RecipeApp.Mobile.ViewModels"
+    xmlns:converters="clr-namespace:RecipeApp.Mobile.Converters"
     x:DataType="viewmodels:AppShellViewModel"
     Shell.FlyoutBehavior="Disabled">
 
+    <Shell.Resources>
+        <ResourceDictionary>
+            <converters:LanguageToFlagConverter x:Key="LanguageToFlagConverter" />
+        </ResourceDictionary>
+    </Shell.Resources>
+
     <Shell.ToolbarItems>
         <ToolbarItem 
-            Text="🌐" 
             Order="Primary" 
             Priority="0"  
-            Command="{Binding ShowLanguagePopupCommand}" />
+            Command="{Binding ShowLanguagePopupCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource 
+                    FontFamily="Default"
+                    Size="28"
+                    Color="{AppThemeBinding Light=Black, Dark=White}"
+                    Glyph="{Binding CurrentLanguage, Converter={StaticResource LanguageToFlagConverter}}" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
     </Shell.ToolbarItems>
 
     <ShellContent

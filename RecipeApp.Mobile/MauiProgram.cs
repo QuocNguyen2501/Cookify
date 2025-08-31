@@ -2,6 +2,7 @@
 using RecipeApp.Mobile.Services;
 using RecipeApp.Mobile.ViewModels;
 using RecipeApp.Mobile.Components.Popups;
+using Plugin.MauiMTAdmob;
 
 namespace RecipeApp.Mobile;
 
@@ -13,6 +14,7 @@ public static class MauiProgram
 		builder
 			.UseMauiApp<App>()
 			.UseMauiCommunityToolkit()
+			.UseMauiMTAdmob()
 			.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -24,6 +26,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<LanguageService>();
 		builder.Services.AddSingleton<IRecipeDataService, RecipeDataService>();
 		builder.Services.AddSingleton<ICategoryDataService, CategoryDataService>();
+		builder.Services.AddSingleton<IAdService, AdService>();
 
 		// Register ViewModels
 		builder.Services.AddSingleton<AppShellViewModel>();

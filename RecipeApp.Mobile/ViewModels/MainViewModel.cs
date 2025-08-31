@@ -15,6 +15,8 @@ public partial class MainViewModel : BaseViewModel, IDisposable
     private readonly IRecipeDataService _recipeDataService;
     private readonly ICategoryDataService _categoryDataService;
     private readonly LanguageService _languageService;
+    private readonly IAdService _adService;
+    private int _categoryClickCount = 0;
 
     public ObservableCollection<Recipe> Recipes { get; }
     public ObservableCollection<Recipe> FilteredRecipes { get; }
@@ -40,11 +42,12 @@ public partial class MainViewModel : BaseViewModel, IDisposable
         _languageService.SetLanguage(value);
     }
 
-    public MainViewModel(IRecipeDataService recipeDataService, ICategoryDataService categoryDataService, LanguageService languageService)
+    public MainViewModel(IRecipeDataService recipeDataService, ICategoryDataService categoryDataService, LanguageService languageService, IAdService adService)
     {
         _recipeDataService = recipeDataService;
         _categoryDataService = categoryDataService;
         _languageService = languageService;
+        _adService = adService;
 
         Recipes = new ObservableCollection<Recipe>();
         FilteredRecipes = new ObservableCollection<Recipe>();
@@ -59,7 +62,12 @@ public partial class MainViewModel : BaseViewModel, IDisposable
         // Update localized title after setting language
         UpdateLocalizedTitle();
 
-        Task.Run(async () => await LoadData());
+        Task.Run(async () => 
+        {
+            await LoadData();
+            // Load an interstitial ad when the app starts
+            await _adService.LoadInterstitialAdAsync();
+        });
     }
 
     /// <summary>
@@ -99,6 +107,16 @@ public partial class MainViewModel : BaseViewModel, IDisposable
     {
         if (category != null)
         {
+            _categoryClickCount++;
+            
+            // Show interstitial ad every 3rd category click
+            if (_categoryClickCount % 3 == 0 && _adService.IsInterstitialAdReady)
+            {
+                await _adService.ShowInterstitialAdAsync();
+                // Add a small delay to let the ad show before navigation
+                await Task.Delay(1000);
+            }
+            
             await Shell.Current.GoToAsync($"categoryrecipes?categoryId={category.Id}");
         }
     }

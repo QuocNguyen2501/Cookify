@@ -1,6 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true"></application>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.qnsolution.cookify">
+	<application android:allowBackup="true"  android:supportsRtl="true" android:label="Cookify">
+		<!-- AdMob App ID - Using demo/test App ID -->
+		<meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-2462813848027079~8250732281" />
+	</application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
+	<!-- AdMob permissions -->
+	<uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 </manifest>

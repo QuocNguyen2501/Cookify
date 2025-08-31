@@ -9,11 +9,14 @@ namespace RecipeApp.Mobile.ViewModels;
 /// <summary>
 /// ViewModel for the AppShell that handles navigation and global commands
 /// </summary>
-public partial class AppShellViewModel : BaseViewModel
+public partial class AppShellViewModel : BaseViewModel, IDisposable
 {
     private readonly ILanguagePreferenceService _languagePreferenceService;
     private readonly LanguageService _languageService;
     private readonly IServiceProvider _serviceProvider;
+
+    [ObservableProperty]
+    private string currentLanguage = "en";
 
     public AppShellViewModel(
         ILanguagePreferenceService languagePreferenceService,
@@ -23,6 +26,18 @@ public partial class AppShellViewModel : BaseViewModel
         _languagePreferenceService = languagePreferenceService;
         _languageService = languageService;
         _serviceProvider = serviceProvider;
+
+        // Initialize current language and subscribe to changes
+        CurrentLanguage = _languageService.CurrentLanguage;
+        _languageService.LanguageChanged += OnLanguageChanged;
+    }
+
+    /// <summary>
+    /// Handles language change events from the language service
+    /// </summary>
+    private void OnLanguageChanged(string newLanguage)
+    {
+        CurrentLanguage = newLanguage;
     }
 
     /// <summary>
@@ -57,5 +72,13 @@ public partial class AppShellViewModel : BaseViewModel
         {
             IsBusy = false;
         }
+    }
+
+    /// <summary>
+    /// Dispose method to unsubscribe from events
+    /// </summary>
+    public void Dispose()
+    {
+        _languageService.LanguageChanged -= OnLanguageChanged;
     }
 }

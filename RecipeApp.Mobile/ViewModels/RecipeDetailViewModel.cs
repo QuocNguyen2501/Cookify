@@ -2,6 +2,7 @@ using RecipeApp.Models;
 using RecipeApp.Mobile.Services;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace RecipeApp.Mobile.ViewModels;
 
@@ -13,6 +14,8 @@ public partial class RecipeDetailViewModel : BaseViewModel, IDisposable
 {
     private readonly IRecipeDataService _recipeDataService;
     private readonly LanguageService _languageService;
+    private readonly IAdService _adService;
+    private static int _recipeViewCount = 0;
 
     [ObservableProperty]
     private Recipe? currentRecipe;
@@ -39,6 +42,19 @@ public partial class RecipeDetailViewModel : BaseViewModel, IDisposable
         {
             Title = value.Name.GetLocalizedText(CurrentLanguage);
             UpdateLocalizedContent();
+            
+            // Increment view count and potentially show ad
+            _recipeViewCount++;
+            
+            // Show interstitial ad every 4th recipe view
+            if (_recipeViewCount % 4 == 0 && _adService.IsInterstitialAdReady)
+            {
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(2000); // Wait 2 seconds after content loads
+                    await _adService.ShowInterstitialAdAsync();
+                });
+            }
         }
     }
 
@@ -54,10 +70,11 @@ public partial class RecipeDetailViewModel : BaseViewModel, IDisposable
         }
     }
 
-    public RecipeDetailViewModel(IRecipeDataService recipeDataService, LanguageService languageService)
+    public RecipeDetailViewModel(IRecipeDataService recipeDataService, LanguageService languageService, IAdService adService)
     {
         _recipeDataService = recipeDataService;
         _languageService = languageService;
+        _adService = adService;
 
         // Subscribe to language changes
         _languageService.LanguageChanged += OnLanguageChanged;

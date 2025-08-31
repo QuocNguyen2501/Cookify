@@ -5,6 +5,7 @@
              xmlns:converters="clr-namespace:RecipeApp.Mobile.Converters"
              xmlns:viewModels="clr-namespace:RecipeApp.Mobile.ViewModels"
              xmlns:strings="clr-namespace:RecipeApp.Mobile.Resources.Strings"
+             xmlns:admob="clr-namespace:Plugin.MauiMTAdmob.Controls;assembly=Plugin.MauiMTAdmob"
              Title="{Binding Title}">
     
     <ContentPage.Resources>
@@ -14,118 +15,133 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <ScrollView>
-        <StackLayout Padding="16" Spacing="10">
-            <!-- Recipe Image -->
-            <Image Source="{Binding CurrentRecipe.ImageFileName, Converter={StaticResource ImageConverter}}"
-                   Aspect="AspectFill"
-                   HeightRequest="200"
-                   HorizontalOptions="FillAndExpand"
-                   BackgroundColor="LightGray" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <ScrollView Grid.Row="0">
+            <StackLayout Padding="16" Spacing="10">
+                <!-- Recipe Image -->
+                <Image Source="{Binding CurrentRecipe.ImageFileName, Converter={StaticResource ImageConverter}}"
+                       Aspect="AspectFill"
+                       HeightRequest="200"
+                       HorizontalOptions="Fill"
+                       BackgroundColor="LightGray" />
 
-            <!-- Recipe Name -->
-            <Label Text="{Binding DisplayName}"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   TextColor="Black" />
+                <!-- Recipe Name -->
+                <Label Text="{Binding DisplayName}"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       TextColor="Black" />
 
-            <!-- Recipe Description -->
-            <Label Text="{Binding DisplayDescription}"
-                   FontSize="16"
-                   TextColor="Gray"
-                   HorizontalOptions="Center"
-                   HorizontalTextAlignment="Center" />
+                <!-- Recipe Description -->
+                <Label Text="{Binding DisplayDescription}"
+                       FontSize="16"
+                       TextColor="Gray"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center" />
 
-            <!-- Cooking Time Info -->
-            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto">
-                <StackLayout Grid.Column="0" HorizontalOptions="Center">
-                    <Label Text="{Binding Source={x:Static strings:AppResources.PrepTime}, 
+                <!-- Cooking Time Info -->
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto">
+                    <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                        <Label Text="{Binding Source={x:Static strings:AppResources.PrepTime}, 
+                                      Converter={StaticResource StaticResourceConverter}}" 
+                               FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                        <Label Text="{Binding CurrentRecipe.PrepTime}" 
+                               FontSize="16" 
+                               HorizontalOptions="Center" />
+                    </StackLayout>
+                    
+                    <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                        <Label Text="{Binding Source={x:Static strings:AppResources.CookTime}, 
+                                      Converter={StaticResource StaticResourceConverter}}" 
+                               FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                        <Label Text="{Binding CurrentRecipe.CookTime}" 
+                               FontSize="16" 
+                               HorizontalOptions="Center" />
+                    </StackLayout>
+                </Grid>
+
+                <!-- Category -->
+                <StackLayout HorizontalOptions="Center">
+                    <Label Text="{Binding Source={x:Static strings:AppResources.Category}, 
                                   Converter={StaticResource StaticResourceConverter}}" 
                            FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
-                    <Label Text="{Binding CurrentRecipe.PrepTime}" 
+                    <Label Text="{Binding DisplayCategoryName}" 
                            FontSize="16" 
                            HorizontalOptions="Center" />
                 </StackLayout>
-                
-                <StackLayout Grid.Column="1" HorizontalOptions="Center">
-                    <Label Text="{Binding Source={x:Static strings:AppResources.CookTime}, 
-                                  Converter={StaticResource StaticResourceConverter}}" 
-                           FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
-                    <Label Text="{Binding CurrentRecipe.CookTime}" 
-                           FontSize="16" 
-                           HorizontalOptions="Center" />
-                </StackLayout>
-            </Grid>
 
-            <!-- Category -->
-            <StackLayout HorizontalOptions="Center">
-                <Label Text="{Binding Source={x:Static strings:AppResources.Category}, 
+                <!-- Ingredients Section -->
+                <Label Text="{Binding Source={x:Static strings:AppResources.Ingredients}, 
                               Converter={StaticResource StaticResourceConverter}}" 
-                       FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
-                <Label Text="{Binding DisplayCategoryName}" 
-                       FontSize="16" 
-                       HorizontalOptions="Center" />
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       Margin="0,0,0,8"
+                       TextColor="Black" />
+                
+                <CollectionView ItemsSource="{Binding DisplayIngredients}" 
+                              BackgroundColor="Transparent">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Grid ColumnDefinitions="Auto,*" 
+                                  Padding="0,0,0,8" 
+                                  RowSpacing="4">
+                                <Ellipse Grid.Column="0" 
+                                       WidthRequest="8" 
+                                       HeightRequest="8" 
+                                       Fill="Gray" 
+                                       VerticalOptions="Center" 
+                                       Margin="0,0,12,0" />
+                                <Label Grid.Column="1" 
+                                     Text="{Binding .}" 
+                                     FontSize="16" 
+                                     VerticalOptions="Center"
+                                     TextColor="Black"
+                                     x:DataType="x:String" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Instructions Section -->
+                <Label Text="{Binding Source={x:Static strings:AppResources.Instructions}, 
+                              Converter={StaticResource StaticResourceConverter}}" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       Margin="0,0,0,8"
+                       TextColor="Black" />
+                
+                <CollectionView ItemsSource="{Binding DisplayInstructions}" 
+                              BackgroundColor="Transparent">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Grid ColumnDefinitions="*" 
+                                  Padding="8,0" 
+                                  RowSpacing="4">
+                                <Label Grid.Column="0" 
+                                     Text="{Binding .}" 
+                                     FontSize="16" 
+                                     VerticalOptions="Center"
+                                     TextColor="Black"
+                                     x:DataType="x:String" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                
             </StackLayout>
-
-            <!-- Ingredients Section -->
-            <Label Text="{Binding Source={x:Static strings:AppResources.Ingredients}, 
-                          Converter={StaticResource StaticResourceConverter}}" 
-                   FontSize="20" 
-                   FontAttributes="Bold" 
-                   Margin="0,0,0,8"
-                   TextColor="Black" />
-            
-            <CollectionView ItemsSource="{Binding DisplayIngredients}" 
-                          BackgroundColor="Transparent">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="x:String">
-                        <Grid ColumnDefinitions="Auto,*" 
-                              Padding="0,0,0,8" 
-                              RowSpacing="4">
-                            <Ellipse Grid.Column="0" 
-                                   WidthRequest="8" 
-                                   HeightRequest="8" 
-                                   Fill="Gray" 
-                                   VerticalOptions="Center" 
-                                   Margin="0,0,12,0" />
-                            <Label Grid.Column="1" 
-                                 Text="{Binding .}" 
-                                 FontSize="16" 
-                                 VerticalOptions="Center"
-                                 TextColor="Black"
-                                 x:DataType="x:String" />
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
-            <!-- Instructions Section -->
-            <Label Text="{Binding Source={x:Static strings:AppResources.Instructions}, 
-                          Converter={StaticResource StaticResourceConverter}}" 
-                   FontSize="20" 
-                   FontAttributes="Bold" 
-                   Margin="0,0,0,8"
-                   TextColor="Black" />
-            
-            <CollectionView ItemsSource="{Binding DisplayInstructions}" 
-                          BackgroundColor="Transparent">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="x:String">
-                        <Grid ColumnDefinitions="*" 
-                              Padding="8,0" 
-                              RowSpacing="4">
-                            <Label Grid.Column="0" 
-                                 Text="{Binding .}" 
-                                 FontSize="16" 
-                                 VerticalOptions="Center"
-                                 TextColor="Black"
-                                 x:DataType="x:String" />
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            
-        </StackLayout>
-    </ScrollView>
+        </ScrollView>
+        
+        <!-- AdMob Banner Ad -->
+        <admob:MTAdView Grid.Row="1" 
+                        AdsId="ca-app-pub-2462813848027079/5189470585"
+                        HeightRequest="50"
+                        VerticalOptions="End"
+                        HorizontalOptions="Fill" />
+        
+    </Grid>
 </ContentPage>

@@ -10,8 +10,8 @@ tools: ['codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure',
   - MUST KILL ALL TERMINAL before start a new one. AFTER OPENED A NEW TERMINAL, YOU NEED to wait few seconds before inserting and running a command in the terminal.
 
   ## Code Style and Structure
-  - Follow C# and .NET coding standards, SOLID and best practices.
-  - ALWAYS use playwright mcp to test UI web features after finished implementation. Keep in mind that when you start the tests, the aspire project must be running.
+  - ALWAYS use playwright mcp to test UI web features after finished implementation.
+  - MUST give a todo list before implementation. the TODO list should also include reading relevant online documents. After finishing the implementation, update the todo list with completed tasks.
   - Write concise, idiomatic C# code with accurate examples.
   - Follow .NET and ASP.NET Core conventions and best practices.
   - Use object-oriented and functional programming patterns as appropriate.
@@ -20,7 +20,7 @@ tools: ['codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure',
   - Use descriptive variable and method names (e.g., 'IsUserSignedIn', 'CalculateTotal').
   - Structure files according to .NET conventions (Controllers, Models, Services, etc.).
   - ALWAYS separate concerns (e.g., use services for business logic, repositories for data access, separate UI concerns).
-  - MUST give a todo list before implementation. the TODO list should also include reading relevant online documents. After finishing the implementation, update the todo list with completed tasks.
+  - Follow C# and .NET coding standards, SOLID and best practices.
 
   ## Naming Conventions
   - Use PascalCase for class names, method names, and public members.
@@ -92,6 +92,7 @@ tools: ['codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure',
 
   ## Document References
     - [ASP.NET Core Documentation](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/apis?view=aspnetcore-9.0)
+    - [ASP.NET Blazor Documentation](https://learn.microsoft.com/en-us/aspnet/core/blazor/?view=aspnetcore-9.0)
     - [Entity Framework Core Documentation](https://learn.microsoft.com/en-us/ef/core/)
     - [ASP.NET MAUI Documentation](https://learn.microsoft.com/en-us/dotnet/maui/what-is-maui?view=net-maui-9.0)
     - [ASP.NET MAUI Community Toolkit Documentation](https://learn.microsoft.com/en-us/dotnet/communitytoolkit/introduction)

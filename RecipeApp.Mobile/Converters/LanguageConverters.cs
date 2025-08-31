@@ -28,6 +28,27 @@ public class LanguageConverter : IValueConverter
     }
 }
 
+public class LanguageToFlagConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is string languageCode)
+        {
+            return languageCode.ToLower() switch
+            {
+                "vi" => "🇻🇳", // Vietnam flag
+                "en" or _ => "🇺🇸"  // US flag for English
+            };
+        }
+        return "🇺🇸"; // Default to US flag
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
 public class StaticResourceConverter : IValueConverter
 {
     private static readonly ResourceManager ResourceManager = new("RecipeApp.Mobile.Resources.Strings.AppResources", typeof(StaticResourceConverter).Assembly);

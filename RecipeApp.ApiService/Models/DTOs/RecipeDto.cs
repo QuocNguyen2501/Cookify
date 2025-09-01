@@ -12,6 +12,8 @@ namespace RecipeApp.ApiService.Models.DTOs
         public string? ImageFileName { get; set; }
         public List<RecipeLocalizedText> Ingredients { get; set; } = [];
         public List<RecipeLocalizedText> Instructions { get; set; } = [];
+
+        public Guid CategoryId { get; set; }
         public CategoryDto? Category { get; set; }
         
         public static RecipeDto FromEntity(Recipe recipe)
@@ -26,6 +28,7 @@ namespace RecipeApp.ApiService.Models.DTOs
                 ImageFileName = recipe.ImageFileName,
                 Ingredients = recipe.Ingredients,
                 Instructions = recipe.Instructions,
+                CategoryId = recipe.Category!.Id,
                 Category = recipe.Category != null ? CategoryDto.FromEntity(recipe.Category) : null
             };
         }

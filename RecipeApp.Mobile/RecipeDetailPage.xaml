@@ -45,8 +45,17 @@
                        HorizontalTextAlignment="Center" />
 
                 <!-- Cooking Time Info -->
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto">
+                <Grid ColumnDefinitions="*, *,*" RowDefinitions="Auto">
+                     <!-- Category -->
                     <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                        <Label Text="{Binding Source={x:Static strings:AppResources.Category}, 
+                                    Converter={StaticResource StaticResourceConverter}}" 
+                            FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                        <Label Text="{Binding DisplayCategoryName}" 
+                            FontSize="16" 
+                            HorizontalOptions="Center" />
+                    </StackLayout>
+                    <StackLayout Grid.Column="1" HorizontalOptions="Center">
                         <Label Text="{Binding Source={x:Static strings:AppResources.PrepTime}, 
                                       Converter={StaticResource StaticResourceConverter}}" 
                                FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
@@ -54,8 +63,7 @@
                                FontSize="16" 
                                HorizontalOptions="Center" />
                     </StackLayout>
-                    
-                    <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                    <StackLayout Grid.Column="2" HorizontalOptions="Center">
                         <Label Text="{Binding Source={x:Static strings:AppResources.CookTime}, 
                                       Converter={StaticResource StaticResourceConverter}}" 
                                FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
@@ -65,15 +73,7 @@
                     </StackLayout>
                 </Grid>
 
-                <!-- Category -->
-                <StackLayout HorizontalOptions="Center">
-                    <Label Text="{Binding Source={x:Static strings:AppResources.Category}, 
-                                  Converter={StaticResource StaticResourceConverter}}" 
-                           FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
-                    <Label Text="{Binding DisplayCategoryName}" 
-                           FontSize="16" 
-                           HorizontalOptions="Center" />
-                </StackLayout>
+               
 
                 <!-- Ingredients Section -->
                 <Label Text="{Binding Source={x:Static strings:AppResources.Ingredients}, 

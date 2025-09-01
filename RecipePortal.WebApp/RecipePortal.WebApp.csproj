@@ -11,4 +11,10 @@
     <ProjectReference Include="..\RecipeApp.Models\RecipeApp.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Facet" Version="2.4.5" />
+    <PackageReference Include="Facet.Extensions" Version="2.4.5" />
+    <PackageReference Include="Facet.Mapping" Version="2.4.5" />
+  </ItemGroup>
+
 </Project>

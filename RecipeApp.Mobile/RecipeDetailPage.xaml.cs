@@ -9,8 +9,7 @@ public partial class RecipeDetailPage : ContentPage
     public RecipeDetailPage(RecipeDetailViewModel viewModel)
     {
         InitializeComponent();
-        _viewModel = viewModel;
-        BindingContext = _viewModel;
+        BindingContext = _viewModel = viewModel;
     }
 
     protected override async void OnAppearing()

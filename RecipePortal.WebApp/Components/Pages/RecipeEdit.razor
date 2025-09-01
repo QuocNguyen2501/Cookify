@@ -1,6 +1,11 @@
 @page "/recipe/new"
 @page "/recipe/edit/{Id:guid}"
+@rendermode InteractiveServer
+@using Facet.Extensions
+@using Facet.Mapping
 @using RecipeApp.Models
+@using RecipePortal.WebApp.Mappers
+@using RecipePortal.WebApp.Models
 @inject HttpClient HttpClient
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
@@ -13,7 +18,7 @@
             @(Id == Guid.Empty ? "Add New Recipe" : "Edit Recipe")
         </h1>
 
-        <EditForm Model="@recipe" FormName="RecipeForm" OnValidSubmit="@HandleValidSubmit">
+        <EditForm Model="@portalRecipe" OnValidSubmit="@HandleValidSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary class="text-red-600 mb-4" />
 
@@ -25,11 +30,11 @@
                         <label for="englishName" class="block text-sm font-medium text-gray-700 mb-2">
                             Recipe Name (English) *
                         </label>
-                        <InputText id="englishName" 
-                                   @bind-Value="recipe.Name.English" 
+                        <InputText id="englishName"
+                                   @bind-Value="portalRecipe.Name.English" 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                    placeholder="Enter recipe name in English" />
-                        <ValidationMessage For="@(() => recipe.Name.English)" class="text-red-600 text-sm mt-1" />
+                        <ValidationMessage For="@(() => portalRecipe.Name.English)" class="text-red-600 text-sm mt-1" />
                     </div>
 
                     <!-- English Description -->
@@ -37,12 +42,12 @@
                         <label for="englishDescription" class="block text-sm font-medium text-gray-700 mb-2">
                             Description (English) *
                         </label>
-                        <InputTextArea id="englishDescription" 
-                                       @bind-Value="recipe.Description.English" 
+                        <InputTextArea id="englishDescription"
+                                       @bind-Value="portalRecipe.Description.English" 
                                        rows="3"
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                        placeholder="Enter recipe description in English" />
-                        <ValidationMessage For="@(() => recipe.Description.English)" class="text-red-600 text-sm mt-1" />
+                        <ValidationMessage For="@(() => portalRecipe.Description.English)" class="text-red-600 text-sm mt-1" />
                     </div>
 
                     <!-- Prep Time -->
@@ -51,7 +56,7 @@
                             Preparation Time
                         </label>
                         <InputText id="prepTime" 
-                                   @bind-Value="recipe.PrepTime" 
+                                   @bind-Value="portalRecipe.PrepTime" 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                    placeholder="e.g., 15 minutes" />
                     </div>
@@ -62,7 +67,7 @@
                             Cook Time
                         </label>
                         <InputText id="cookTime" 
-                                   @bind-Value="recipe.CookTime" 
+                                   @bind-Value="portalRecipe.CookTime" 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                    placeholder="e.g., 30 minutes" />
                     </div>
@@ -73,7 +78,7 @@
                             Image File Name
                         </label>
                         <InputText id="imageFileName" 
-                                   @bind-Value="recipe.ImageFileName" 
+                                   @bind-Value="portalRecipe.ImageFileName" 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                    placeholder="e.g., garlic_butter_bread.jpg" />
                         <p class="mt-1 text-xs text-gray-500">Place images in MAUI project's Resources/Raw/Images folder</p>
@@ -85,7 +90,7 @@
                             Category *
                         </label>
                         <InputSelect id="category" 
-                                     @bind-Value="recipe.CategoryId" 
+                                     @bind-Value="portalRecipe.CategoryId" 
                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                             <option value="">Select a category</option>
                             @if (categories != null)
@@ -96,7 +101,7 @@
                                 }
                             }
                         </InputSelect>
-                        <ValidationMessage For="@(() => recipe.CategoryId)" class="text-red-600 text-sm mt-1" />
+                        <ValidationMessage For="@(() => portalRecipe.CategoryId)" class="text-red-600 text-sm mt-1" />
                     </div>
                 </div>
 
@@ -105,10 +110,10 @@
                     <!-- Vietnamese Name -->
                     <div>
                         <label for="vietnameseName" class="block text-sm font-medium text-gray-700 mb-2">
-                            Tên công thức (Tiếng Việt)
+                            Tên công thức (Tiếng Việt) *
                         </label>
-                        <InputText id="vietnameseName" 
-                                   @bind-Value="recipe.Name.Vietnamese" 
+                        <InputText
+                                   @bind-Value="portalRecipe.Name.Vietnamese" 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                    placeholder="Nhập tên công thức bằng tiếng Việt" />
                     </div>
@@ -116,10 +121,10 @@
                     <!-- Vietnamese Description -->
                     <div>
                         <label for="vietnameseDescription" class="block text-sm font-medium text-gray-700 mb-2">
-                            Mô tả (Tiếng Việt)
+                            Mô tả (Tiếng Việt) *
                         </label>
-                        <InputTextArea id="vietnameseDescription" 
-                                       @bind-Value="recipe.Description.Vietnamese" 
+                        <InputTextArea 
+                                       @bind-Value="portalRecipe.Description.Vietnamese" 
                                        rows="3"
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                        placeholder="Nhập mô tả công thức bằng tiếng Việt" />
@@ -133,11 +138,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- English Ingredients -->
                     <div>
-                        <label for="ingredientsEnglish" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="ingredientsTextEnglish" class="block text-sm font-medium text-gray-700 mb-2">
                             Ingredients (English, one per line) *
                         </label>
-                        <InputTextArea id="ingredientsEnglish" 
-                                       @bind-Value="recipe.IngredientsTextEnglish" 
+                        <InputTextArea id="ingredientsTextEnglish" 
+                                       @bind-Value="portalRecipe.IngredientsTextEnglish" 
                                        rows="6"
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                        placeholder="1 cup flour&#10;2 eggs&#10;1/2 cup milk" />
@@ -145,11 +150,11 @@
 
                     <!-- Vietnamese Ingredients -->
                     <div>
-                        <label for="ingredientsVietnamese" class="block text-sm font-medium text-gray-700 mb-2">
-                            Nguyên liệu (Tiếng Việt, mỗi dòng một nguyên liệu)
+                        <label for="ingredientsTextVietnamese" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nguyên liệu (Tiếng Việt, mỗi dòng một nguyên liệu) *
                         </label>
-                        <InputTextArea id="ingredientsVietnamese" 
-                                       @bind-Value="recipe.IngredientsTextVietnamese" 
+                        <InputTextArea id="ingredientsTextVietnamese" 
+                                       @bind-Value="portalRecipe.IngredientsTextVietnamese" 
                                        rows="6"
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                        placeholder="1 cốc bột mì&#10;2 quả trứng&#10;1/2 cốc sữa" />
@@ -163,11 +168,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- English Instructions -->
                     <div>
-                        <label for="instructionsEnglish" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="instructionsTextEnglish" class="block text-sm font-medium text-gray-700 mb-2">
                             Instructions (English, one step per line) *
                         </label>
-                        <InputTextArea id="instructionsEnglish" 
-                                       @bind-Value="recipe.InstructionsTextEnglish" 
+                        <InputTextArea id="instructionsTextEnglish" 
+                                       @bind-Value="portalRecipe.InstructionsTextEnglish" 
                                        rows="8"
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                        placeholder="Mix flour and eggs&#10;Add milk gradually&#10;Cook for 10 minutes" />
@@ -175,11 +180,11 @@
 
                     <!-- Vietnamese Instructions -->
                     <div>
-                        <label for="instructionsVietnamese" class="block text-sm font-medium text-gray-700 mb-2">
-                            Hướng dẫn (Tiếng Việt, mỗi dòng một bước)
+                        <label for="instructionsTextVietnamese" class="block text-sm font-medium text-gray-700 mb-2">
+                            Hướng dẫn (Tiếng Việt, mỗi dòng một bước) *
                         </label>
-                        <InputTextArea id="instructionsVietnamese" 
-                                       @bind-Value="recipe.InstructionsTextVietnamese" 
+                        <InputTextArea id="instructionsTextVietnamese" 
+                                       @bind-Value="portalRecipe.InstructionsTextVietnamese" 
                                        rows="8"
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                        placeholder="Trộn bột mì và trứng&#10;Thêm sữa từ từ&#10;Nấu trong 10 phút" />
@@ -224,7 +229,8 @@
 @code {
     [Parameter] public Guid Id { get; set; }
 
-    private Recipe recipe = new();
+    [SupplyParameterFromForm]
+    private PortalRecipe portalRecipe { get; set; } = new();
     private List<Category>? categories;
     private bool isSubmitting = false;
     private bool hasRendered = false;
@@ -272,7 +278,7 @@
             var loadedRecipe = await HttpClient.GetFromJsonAsync<Recipe>($"api/recipes/{Id}");
             if (loadedRecipe != null)
             {
-                recipe = loadedRecipe;
+                portalRecipe = await loadedRecipe.ToFacetAsync<Recipe,PortalRecipe,RecipeMapper>();
             }
             else
             {
@@ -310,6 +316,7 @@
         try
         {
             HttpResponseMessage response;
+            var recipe = await portalRecipe.ToFacetAsync<PortalRecipe,Recipe,PortalRecipeMapper>();
             
             if (Id == Guid.Empty)
             {

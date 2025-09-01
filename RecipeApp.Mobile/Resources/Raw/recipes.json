@@ -1,284 +1,46 @@
 [
   {
-    "id": "4ab951a9-03a5-4466-9981-3c1a1bbcccd0",
+    "id": "ddcadc61-d9ec-4bef-a2ea-724b56b03ecc",
     "name": {
-      "english": "Mango Sticky Rice",
-      "vietnamese": "X\u00F4i xo\u00E0i"
+      "english": "Carrot, Apple \u0026 Ginger Juice",
+      "vietnamese": "C\u00E0 r\u1ED1t, t\u00E1o \u0026 g\u1EEBng"
     },
     "description": {
-      "english": "Sweet sticky rice with fresh mango and coconut milk",
-      "vietnamese": "X\u00F4i ng\u1ECDt v\u1EDBi xo\u00E0i t\u01B0\u01A1i v\u00E0 n\u01B0\u1EDBc c\u1ED1t d\u1EEBa"
+      "english": "A refreshing juice perfect for a workout or a yoga session. Ginger helps reduce muscle soreness and fatigue. This drink provides a rich source of Vitamin A, C, B1, B6 and fiber.",
+      "vietnamese": "S\u1EF1 pha tr\u1ED9n gi\u1EEFa nh\u1EEFng lo\u1EA1i rau c\u1EE7 v\u00E0 tr\u00E1i c\u00E2y th\u00F4ng d\u1EE5ng s\u1EBD cho ra \u0111\u1EDDi m\u1ED9t m\u00F3n u\u1ED1ng h\u1EA5p d\u1EABn v\u00E0 ho\u00E0n h\u1EA3o, c\u00F3 th\u1EC3 d\u00F9ng trong qu\u00E1 tr\u00ECnh t\u1EADp luy\u1EC7n gi\u1EEF d\u00E1ng, yoga ho\u1EB7c \u0111i b\u1ED9. G\u1EEBng gi\u00FAp l\u00E0m \u1EA9m c\u01A1 th\u1EC3 v\u00E0 gi\u1EA3m tri\u1EC7u ch\u1EE9ng bu\u1ED3n n\u00F4n. Y m\u00F3n u\u1ED1ng n\u00E0y l\u00E0 ngu\u1ED3n cung c\u1EA5p vitamin A, C, B1, B6 v\u00E0 Kali r\u1EC5 d\u1ED3i d\u00E0o."
     },
-    "prepTime": "15 minutes",
-    "cookTime": "30 minutes",
-    "imageFileName": "mango-sticky-rice.jpg",
+    "prepTime": "5",
+    "cookTime": "5",
+    "imageFileName": "carrot_apple_ginger_juice.png",
     "ingredients": [
       {
-        "english": "Glutinous rice",
-        "vietnamese": "G\u1EA1o n\u1EBFp"
+        "english": "2 Carrots (200 gram)",
+        "vietnamese": "2 tr\u00E1i c\u00E0 r\u1ED1t (200 gram)"
       },
       {
-        "english": "Coconut milk",
-        "vietnamese": "N\u01B0\u1EDBc c\u1ED1t d\u1EEBa"
+        "english": "1 Apple",
+        "vietnamese": "1 tr\u00E1i t\u00E1o"
       },
       {
-        "english": "Sugar",
-        "vietnamese": "\u0110\u01B0\u1EDDng"
-      },
-      {
-        "english": "Salt",
-        "vietnamese": "Mu\u1ED1i"
-      },
-      {
-        "english": "Fresh mango",
-        "vietnamese": "Xo\u00E0i t\u01B0\u01A1i"
-      },
-      {
-        "english": "Toasted sesame seeds",
-        "vietnamese": "M\u00E8 rang"
+        "english": "1 centimet Ginger",
+        "vietnamese": "1 centimet G\u1EEBng"
       }
     ],
     "instructions": [
       {
-        "english": "Soak glutinous rice overnight",
-        "vietnamese": "Ng\u00E2m g\u1EA1o n\u1EBFp qua \u0111\u00EAm"
+        "english": "Peel and clean all ingredients, then cut into small pieces.",
+        "vietnamese": "C\u00E0 r\u1ED1t, t\u00E1o: r\u1EEDa s\u1EA1ch, c\u1EAFt nh\u1ECF."
       },
       {
-        "english": "Steam rice until tender",
-        "vietnamese": "H\u1EA5p g\u1EA1o cho \u0111\u1EBFn khi m\u1EC1m"
+        "english": "Peel the ginger.",
+        "vietnamese": "G\u1EEBng: g\u1ECDt v\u1ECF."
       },
       {
-        "english": "Mix coconut milk with sugar and salt",
-        "vietnamese": "Pha n\u01B0\u1EDBc c\u1ED1t d\u1EEBa v\u1EDBi \u0111\u01B0\u1EDDng v\u00E0 mu\u1ED1i"
-      },
-      {
-        "english": "Pour over steamed rice",
-        "vietnamese": "R\u01B0\u1EDBi l\u00EAn x\u00F4i"
-      },
-      {
-        "english": "Serve with sliced mango",
-        "vietnamese": "\u0102n k\u00E8m v\u1EDBi xo\u00E0i th\u00E1i l\u00E1t"
-      },
-      {
-        "english": "Sprinkle with sesame seeds",
-        "vietnamese": "R\u1EAFc m\u00E8 rang l\u00EAn tr\u00EAn"
+        "english": "Put all ingredients into the juicer, extract the juice, then add ice.",
+        "vietnamese": "Cho c\u00E1c nguy\u00EAn li\u1EC7u v\u00E0o m\u00E1y, \u00E9p l\u1EA5y n\u01B0\u1EDBc, r\u1ED3i h\u1ED7n h\u1EE3p n\u01B0\u1EDBc \u00E9p ra ly, cho \u0111\u00E1 vi\u00EAn. D\u00F9ng l\u1EA1nh."
       }
     ],
-    "category": {
-      "id": "c250d657-f8e0-473a-8ccd-a17c42e2712b",
-      "name": {
-        "english": "Desserts",
-        "vietnamese": "M\u00F3n tr\u00E1ng mi\u1EC7ng"
-      }
-    }
-  },
-  {
-    "id": "4d77e285-cca2-40ff-8d03-3cfe13d41800",
-    "name": {
-      "english": "Spring Rolls",
-      "vietnamese": "Ch\u1EA3 gi\u00F2"
-    },
-    "description": {
-      "english": "Crispy Vietnamese spring rolls with fresh vegetables",
-      "vietnamese": "Ch\u1EA3 gi\u00F2 gi\u00F2n r\u1EE5m v\u1EDBi rau c\u1EE7 t\u01B0\u01A1i ngon"
-    },
-    "prepTime": "10 minutes",
-    "cookTime": "10 minutes",
-    "imageFileName": "spring-rolls.jpg",
-    "ingredients": [
-      {
-        "english": "Rice paper",
-        "vietnamese": "B\u00E1nh tr\u00E1ng"
-      },
-      {
-        "english": "Lettuce",
-        "vietnamese": "X\u00E0 l\u00E1ch"
-      },
-      {
-        "english": "Carrot",
-        "vietnamese": "C\u00E0 r\u1ED1t"
-      },
-      {
-        "english": "Cucumber",
-        "vietnamese": "D\u01B0a chu\u1ED9t"
-      },
-      {
-        "english": "Mint leaves",
-        "vietnamese": "L\u00E1 b\u1EA1c h\u00E0"
-      },
-      {
-        "english": "Dipping sauce",
-        "vietnamese": "N\u01B0\u1EDBc ch\u1EA5m"
-      }
-    ],
-    "instructions": [
-      {
-        "english": "Soak rice paper in warm water",
-        "vietnamese": "Nh\u00FAng b\u00E1nh tr\u00E1ng v\u00E0o n\u01B0\u1EDBc \u1EA5m"
-      },
-      {
-        "english": "Add lettuce and vegetables",
-        "vietnamese": "Th\u00EAm x\u00E0 l\u00E1ch v\u00E0 rau c\u1EE7"
-      },
-      {
-        "english": "Roll tightly",
-        "vietnamese": "Cu\u1ED1n ch\u1EB7t"
-      },
-      {
-        "english": "Serve with dipping sauce",
-        "vietnamese": "\u0102n k\u00E8m v\u1EDBi n\u01B0\u1EDBc ch\u1EA5m"
-      }
-    ],
-    "category": {
-      "id": "dc9a92a1-f284-41ac-9a38-11dac41b62b8",
-      "name": {
-        "english": "Appetizers",
-        "vietnamese": "M\u00F3n khai v\u1ECB"
-      }
-    }
-  },
-  {
-    "id": "6125246b-63c4-403e-8efe-d2dbb0c9dccd",
-    "name": {
-      "english": "Beef Pho",
-      "vietnamese": "Ph\u1EDF b\u00F2"
-    },
-    "description": {
-      "english": "Traditional Vietnamese beef noodle soup",
-      "vietnamese": "M\u00F3n ph\u1EDF b\u00F2 truy\u1EC1n th\u1ED1ng Vi\u1EC7t Nam"
-    },
-    "prepTime": "30 minutes",
-    "cookTime": "6 hours",
-    "imageFileName": "beef-pho.jpg",
-    "ingredients": [
-      {
-        "english": "Beef bones",
-        "vietnamese": "X\u01B0\u01A1ng b\u00F2"
-      },
-      {
-        "english": "Rice noodles",
-        "vietnamese": "B\u00E1nh ph\u1EDF"
-      },
-      {
-        "english": "Beef slices",
-        "vietnamese": "Th\u1ECBt b\u00F2 th\u00E1i l\u00E1t"
-      },
-      {
-        "english": "Onion",
-        "vietnamese": "H\u00E0nh t\u00E2y"
-      },
-      {
-        "english": "Star anise",
-        "vietnamese": "Hoa h\u1ED3i"
-      },
-      {
-        "english": "Cinnamon",
-        "vietnamese": "Qu\u1EBF"
-      },
-      {
-        "english": "Fish sauce",
-        "vietnamese": "N\u01B0\u1EDBc m\u1EAFm"
-      },
-      {
-        "english": "Bean sprouts",
-        "vietnamese": "Gi\u00E1 \u0111\u1ED7"
-      },
-      {
-        "english": "Herbs",
-        "vietnamese": "Rau th\u01A1m"
-      }
-    ],
-    "instructions": [
-      {
-        "english": "Simmer beef bones for 6 hours",
-        "vietnamese": "Ninh x\u01B0\u01A1ng b\u00F2 trong 6 ti\u1EBFng"
-      },
-      {
-        "english": "Add spices and seasonings",
-        "vietnamese": "Th\u00EAm gia v\u1ECB v\u00E0 n\u00EAm n\u1EBFm"
-      },
-      {
-        "english": "Cook rice noodles separately",
-        "vietnamese": "Lu\u1ED9c b\u00E1nh ph\u1EDF ri\u00EAng"
-      },
-      {
-        "english": "Assemble bowl with noodles and beef",
-        "vietnamese": "X\u1EBFp b\u00E1nh ph\u1EDF v\u00E0 th\u1ECBt b\u00F2 v\u00E0o t\u00F4"
-      },
-      {
-        "english": "Pour hot broth over",
-        "vietnamese": "R\u00F3t n\u01B0\u1EDBc d\u00FAng n\u00F3ng"
-      },
-      {
-        "english": "Garnish with herbs and bean sprouts",
-        "vietnamese": "\u0102n k\u00E8m rau th\u01A1m v\u00E0 gi\u00E1 \u0111\u1ED7"
-      }
-    ],
-    "category": {
-      "id": "65a59101-fe7e-4a61-a10f-e8ccd67614c6",
-      "name": {
-        "english": "Main Courses",
-        "vietnamese": "M\u00F3n ch\u00EDnh"
-      }
-    }
-  },
-  {
-    "id": "5ab2431b-9e5c-470f-9dad-f43c2761a149",
-    "name": {
-      "english": "Vietnamese Iced Coffee",
-      "vietnamese": "C\u00E0 ph\u00EA s\u1EEFa \u0111\u00E1"
-    },
-    "description": {
-      "english": "Strong coffee with sweetened condensed milk over ice",
-      "vietnamese": "C\u00E0 ph\u00EA \u0111\u1EADm \u0111\u00E0 v\u1EDBi s\u1EEFa \u0111\u1EB7c c\u00F3 \u0111\u01B0\u1EDDng v\u00E0 \u0111\u00E1"
-    },
-    "prepTime": "5 minutes",
-    "cookTime": "5 minutes",
-    "imageFileName": "vietnamese-iced-coffee.jpg",
-    "ingredients": [
-      {
-        "english": "Vietnamese coffee grounds",
-        "vietnamese": "B\u1ED9t c\u00E0 ph\u00EA Vi\u1EC7t Nam"
-      },
-      {
-        "english": "Sweetened condensed milk",
-        "vietnamese": "S\u1EEFa \u0111\u1EB7c c\u00F3 \u0111\u01B0\u1EDDng"
-      },
-      {
-        "english": "Hot water",
-        "vietnamese": "N\u01B0\u1EDBc n\u00F3ng"
-      },
-      {
-        "english": "Ice cubes",
-        "vietnamese": "\u0110\u00E1 vi\u00EAn"
-      }
-    ],
-    "instructions": [
-      {
-        "english": "Add condensed milk to glass",
-        "vietnamese": "Cho s\u1EEFa \u0111\u1EB7c v\u00E0o ly"
-      },
-      {
-        "english": "Place Vietnamese coffee filter on top",
-        "vietnamese": "\u0110\u1EB7t phin c\u00E0 ph\u00EA l\u00EAn tr\u00EAn"
-      },
-      {
-        "english": "Add coffee grounds to filter",
-        "vietnamese": "Cho b\u1ED9t c\u00E0 ph\u00EA v\u00E0o phin"
-      },
-      {
-        "english": "Pour hot water slowly",
-        "vietnamese": "R\u00F3t n\u01B0\u1EDBc n\u00F3ng t\u1EEB t\u1EEB"
-      },
-      {
-        "english": "Let coffee drip",
-        "vietnamese": "Ch\u1EDD c\u00E0 ph\u00EA nh\u1ECF gi\u1ECDt"
-      },
-      {
-        "english": "Stir and add ice",
-        "vietnamese": "Khu\u1EA5y \u0111\u1EC1u v\u00E0 cho \u0111\u00E1"
-      }
-    ],
+    "categoryId": "924a1412-a82e-43ff-b0e1-336604e0ccfe",
     "category": {
       "id": "924a1412-a82e-43ff-b0e1-336604e0ccfe",
       "name": {

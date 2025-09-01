@@ -48,5 +48,55 @@
         "vietnamese": "\u0110\u1ED3 u\u1ED1ng"
       }
     }
+  },
+  {
+    "id": "56f611d6-80c9-4ba3-b499-fd5437f36760",
+    "name": {
+      "english": "Watercress \u0026 Pear",
+      "vietnamese": "C\u1EA3i xoong \u0026 l\u00EA"
+    },
+    "description": {
+      "english": "This is a nutritious dish with a low glycemic index (GI), rich in vitamin C, beta-carotene, and phytochemicals that help reduce the risk of cancer and heart disease. For centuries, watercress has been known as a beneficial vegetable for health. This drink also provides an ideal source of Vitamin C, B6, and beta-carotene, in addition to a necessary amount of calcium for the body.",
+      "vietnamese": "\u0110\u00E2y l\u00E0 m\u00F3n u\u1ED1ng gi\u00E0u dinh d\u01B0\u1EE1ng v\u00E0 c\u00F3 h\u00E0m l\u01B0\u1EE3ng Glycemic (GI) th\u1EA5p, gi\u00E0u vitamin C, beta-carotene v\u00E0 ch\u1EA5t phytochemicals gi\u00FAp gi\u1EA3m nguy c\u01A1 ung th\u01B0 v\u00E0 b\u1EC7nh tim. T\u1EEB nhi\u1EC1u th\u1EBF k\u1EF7 qua, c\u1EA3i xoong \u0111\u00E3 \u0111\u01B0\u1EE3c bi\u1EBFt \u0111\u1EBFn nh\u01B0 m\u1ED9t lo\u1EA1i rau c\u1EA3i r\u1EA5t c\u00F3 \u00EDch cho s\u1EE9c kh\u1ECFe.  \u0110\u00E2y l\u00E0 th\u1EE9c u\u1ED1ng cung c\u1EA5p ngu\u1ED3n vitamin C, B6 v\u00E0 beta-carotene l\u00FD t\u01B0\u1EDFng nh\u1EA5t. Ngo\u00E0i ra, n\u00F3 c\u0169ng cung c\u1EA5p m\u1ED9t l\u01B0\u1EE3ng canxi c\u1EA7n thi\u1EBFt cho c\u01A1 th\u1EC3."
+    },
+    "prepTime": "5",
+    "cookTime": "5",
+    "imageFileName": "watercress_lemon_green_juice.png",
+    "ingredients": [
+      {
+        "english": "Watercress (40 gram)",
+        "vietnamese": "c\u1EA3i xoong (40 gram)"
+      },
+      {
+        "english": "3 ripe pears",
+        "vietnamese": "3 qu\u1EA3 l\u00EA ch\u00EDn"
+      },
+      {
+        "english": "Ice cubes",
+        "vietnamese": "\u0110\u00E1 vi\u00EAn"
+      }
+    ],
+    "instructions": [
+      {
+        "english": "Wash the watercress thoroughly.",
+        "vietnamese": "C\u1EA3i xoong: r\u1EEDa th\u1EADt s\u1EA1ch."
+      },
+      {
+        "english": "Peel and cut the pears into small pieces.",
+        "vietnamese": "L\u00EA: x\u1EAFt l\u00E1t."
+      },
+      {
+        "english": "Put the watercress and pears alternately into the juicer. Pour the juice into a glass and add ice cubes.",
+        "vietnamese": "Cho v\u00E0o m\u00E1y \u00E9p xen k\u1EBD t\u1EEBng \u0111\u1EE3t c\u1EA3i xoong v\u00E0 l\u00EA. R\u00F3t n\u01B0\u1EDBc \u00E9p ra ly v\u00E0 cho v\u00E0i vi\u00EAn \u0111\u00E1."
+      }
+    ],
+    "categoryId": "924a1412-a82e-43ff-b0e1-336604e0ccfe",
+    "category": {
+      "id": "924a1412-a82e-43ff-b0e1-336604e0ccfe",
+      "name": {
+        "english": "Beverages",
+        "vietnamese": "\u0110\u1ED3 u\u1ED1ng"
+      }
+    }
   }
 ]

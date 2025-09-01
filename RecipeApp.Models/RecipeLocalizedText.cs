@@ -9,10 +9,10 @@ namespace RecipeApp.Models;
 public class RecipeLocalizedText
 {
     [Required(ErrorMessage = "English text is required")]
-    [StringLength(500, ErrorMessage = "English text cannot exceed 500 characters")]
+    [StringLength(1000, ErrorMessage = "English text cannot exceed 500 characters")]
     public string English { get; set; } = string.Empty;
     
-    [StringLength(500, ErrorMessage = "Vietnamese text cannot exceed 500 characters")]
+    [StringLength(1000, ErrorMessage = "Vietnamese text cannot exceed 500 characters")]
     public string Vietnamese { get; set; } = string.Empty;
 
     /// <summary>

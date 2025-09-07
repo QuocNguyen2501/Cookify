@@ -94,7 +94,7 @@ tools: ['codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure',
     - [ASP.NET Core Documentation](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/apis?view=aspnetcore-9.0)
     - [ASP.NET Blazor Documentation](https://learn.microsoft.com/en-us/aspnet/core/blazor/?view=aspnetcore-9.0)
     - [Entity Framework Core Documentation](https://learn.microsoft.com/en-us/ef/core/)
-    - [ASP.NET MAUI Documentation](https://learn.microsoft.com/en-us/dotnet/maui/what-is-maui?view=net-maui-9.0)
+    - [ASP.NET MAUI Documentation](https://learn.microsoft.com/en-us/dotnet/maui/?view=net-maui-9.0)
     - [ASP.NET MAUI Community Toolkit Documentation](https://learn.microsoft.com/en-us/dotnet/communitytoolkit/introduction)
     - [ASP.NET Aspire Documentation](https://learn.microsoft.com/en-us/dotnet/aspire/get-started/aspire-overview)
 

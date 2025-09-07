@@ -6,7 +6,7 @@ Cookify is a **multi-language recipe management system** with Vietnamese and Eng
 
 1. **RecipeApp.Models** - Shared class library containing all data models
 2. **RecipeApp.ApiService** - ASP.NET Core Web API with SQL Server database
-3. **RecipePortal.WebApp** - Blazor WebAssembly administrative portal 
+3. **RecipePortal.WebApp** - Blazor Server administrative portal 
 4. **RecipeApp.Mobile** - .NET MAUI cross-platform mobile application
 
 **Critical Context**: This project is 100% complete and functional. Focus on understanding the existing architecture before making any changes.
@@ -53,9 +53,11 @@ public class RecipeLocalizedText
 - **Connection Management**: Automatic connection string injection via Aspire service discovery
 - **Retry Logic**: `EnableRetryOnFailure` configured for transient error handling
 - **JSON Serialization**: `RecipeLocalizedText` objects stored as JSON columns via EF Core value converters
+- **Custom Value Comparer**: `ListRecipeLocalizedTextValueComparer` enables proper change tracking for List properties
 - **Relationship**: `Recipe` → `Category` (Many-to-One with navigation properties)
 - **Database Name**: `recipesdb` (managed by SQL Server container)
 - **Seeding**: `DatabaseSeeder.cs` populates sample Vietnamese recipes on startup
+- **Migration Handling**: Smart migration logic handles switching from EnsureCreated to migrations
 
 ## 🔧 Development Guidelines
 
@@ -70,22 +72,32 @@ public class RecipeLocalizedText
 
 ### API Development Patterns
 - **Controllers**: Follow existing patterns in `CategoriesController` and `RecipesController`
+- **Service Layer**: Use service layer pattern (`IRecipeService`, `ICategoryService`) for business logic
 - **Export Endpoint**: `GET /api/recipes/export` returns JSON with embedded Category data for mobile app
 - **Include Strategy**: Always `.Include(r => r.Category)` when fetching recipes
 - **Return Types**: Use appropriate HTTP status codes (200, 201, 204, 404)
+- **Error Handling**: Wrap operations in try-catch with proper status codes and error messages
+- **JSON Serialization**: Uses System.Text.Json with PropertyNameCaseInsensitive option
 
 ### Blazor Frontend Conventions
 - **Tailwind CSS**: All styling uses Tailwind utility classes
+- **Rendermode**: Uses `@rendermode InteractiveServer` for form pages
 - **Form Patterns**: Study `RecipeEdit.razor` for proper form validation and HttpClient usage
+- **PortalRecipe Model**: Uses dedicated `PortalRecipe` model with helper properties for form binding (IngredientsTextEnglish/Vietnamese, InstructionsTextEnglish/Vietnamese)
+- **Facet Library**: Leverages Facet for model mapping between Recipe and PortalRecipe
 - **Page Structure**: Components in `Components/Pages/` with clear page titles
-- **Error Handling**: User-friendly error messages and loading states
+- **Error Handling**: User-friendly error messages and loading states with spinner UI
 
 ### MAUI Mobile App Architecture
-- **MVVM Pattern**: ViewModels in `ViewModels/`, inherit from `BaseViewModel`
+- **MVVM Pattern**: ViewModels in `ViewModels/`, inherit from `BaseViewModel`, use CommunityToolkit.Mvvm
+- **RelayCommand**: Use `[RelayCommand]` attributes for command methods (no manual ICommand implementation)
+- **ObservableProperty**: Use `[ObservableProperty]` for bindable properties with automatic change notifications
 - **Dependency Injection**: Register services, ViewModels, and Pages in `MauiProgram.cs`
-- **Data Layer**: `RecipeDataService` loads from embedded `recipes.json` file
-- **Navigation**: Shell-based navigation via `AppShell.xaml`
-- **Localization**: `LanguageService` manages current language state
+- **Data Layer**: `RecipeDataService` loads from embedded `recipes.json` file using FileSystem.OpenAppPackageFileAsync
+- **Navigation**: Shell-based navigation via `AppShell.xaml` with query parameters
+- **Localization**: `LanguageService` manages current language state with event notifications
+- **Ad Integration**: Uses MTAdmob plugin with interstitial ads on category navigation (every 3rd click)
+- **Offline-First**: App works entirely from local JSON data, no direct API calls
 
 ## 📁 Key File Locations
 
@@ -100,23 +112,32 @@ RecipeApp.ApiService/
 ├── Data/
 │   ├── AppDbContext.cs           # EF Core context with JSON conversions
 │   └── DatabaseSeeder.cs         # Sample data seeding
-└── Controllers/
-    ├── RecipesController.cs      # CRUD + Export endpoint
-    └── CategoriesController.cs   # Category management
+├── Controllers/
+│   ├── RecipesController.cs      # CRUD + Export endpoint
+│   └── CategoriesController.cs   # Category management
+└── Services/
+    ├── CategoryService.cs        # Business logic for categories
+    └── ...                       # Additional service implementations
 
-RecipePortal.WebApp/Components/Pages/
-├── RecipeList.razor              # Recipe management with export
-├── RecipeEdit.razor              # Recipe creation/editing
-├── CategoryList.razor            # Category management
-└── CategoryEdit.razor            # Category creation/editing
+RecipePortal.WebApp/
+├── Components/Pages/
+│   ├── RecipeList.razor          # Recipe management with export
+│   ├── RecipeEdit.razor          # Recipe creation/editing
+│   ├── CategoryList.razor        # Category management
+│   └── CategoryEdit.razor        # Category creation/editing
+├── Models/
+│   └── PortalRecipe.cs           # Form-binding model with helper properties
+└── Mappers/
+    └── ...                       # Facet model mapping configurations
 
 RecipeApp.Mobile/
 ├── ViewModels/
-│   ├── MainViewModel.cs          # Recipe list logic
+│   ├── MainViewModel.cs          # Recipe list logic with CommunityToolkit.Mvvm
 │   └── RecipeDetailViewModel.cs  # Recipe details logic
 ├── Services/
-│   ├── RecipeDataService.cs      # JSON data loading
-│   └── LanguageService.cs        # Language management
+│   ├── RecipeDataService.cs      # JSON data loading from embedded files
+│   ├── LanguageService.cs        # Language management with events
+│   └── AdService.cs              # MTAdmob integration for interstitial ads
 └── Pages/
     ├── MainPage.xaml             # Recipe list UI
     └── RecipeDetailPage.xaml     # Recipe detail UI

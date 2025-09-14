@@ -2,47 +2,100 @@
 
 ## 🎯 Project Overview
 
-Cookify is a **multi-language recipe management system** with Vietnamese and English support, built using .NET 9.0 Aspire architecture. This is a **complete, production-ready solution** with four core components:
+Cookify is a **comprehensive multi-language recipe management system** with Vietnamese and English support, built using .NET 9.0 Aspire architecture with advanced AI capabilities. This is a **complete, production-ready solution** with six core components:
 
-1. **RecipeApp.Models** - Shared class library containing all data models
-2. **RecipeApp.ApiService** - ASP.NET Core Web API with SQL Server database
-3. **RecipePortal.WebApp** - Blazor Server administrative portal 
-4. **RecipeApp.Mobile** - .NET MAUI cross-platform mobile application
+1. **RecipeApp.Models** - Shared class library containing all data models with comprehensive localization
+2. **RecipeApp.ApiService** - ASP.NET Core Web API with SQL Server database, AI integration via Ollama, and OCR capabilities
+3. **RecipePortal.WebApp** - Blazor Server administrative portal with Facet mapping
+4. **RecipeApp.Mobile** - .NET MAUI cross-platform mobile application with CommunityToolkit.Mvvm and ad integration
+5. **RecipeApp.AppHost** - .NET Aspire orchestration with SQL Server and Ollama services
+6. **RecipeApp.ServiceDefaults** - Shared Aspire service configuration
 
-**Critical Context**: This project is 100% complete and functional. Focus on understanding the existing architecture before making any changes.
+**Critical Context**: This project is 100% complete and functional with advanced AI capabilities for recipe analysis from images. Focus on understanding the existing architecture before making any changes.
+
+## 🔧 Key Technologies & Dependencies
+
+### Core Framework
+- **.NET 9.0**: Latest .NET version for all projects
+- **.NET Aspire**: Cloud-native orchestration and service discovery
+- **Entity Framework Core 9.0**: Data access with SQL Server provider
+- **ASP.NET Core 9.0**: Web API and Blazor Server
+
+### AI & Image Processing
+- **Microsoft Semantic Kernel 1.65.0**: AI orchestration and chat completion
+- **Ollama Connector**: Local AI model integration (gpt-oss:20b)
+- **Tesseract 5.2.0**: OCR for Vietnamese text recognition
+- **Request Timeouts**: 60-minute policies for AI operations
+
+### Mobile Development
+- **.NET MAUI**: Cross-platform mobile application framework
+- **CommunityToolkit.Mvvm 8.4.0**: MVVM pattern implementation
+- **CommunityToolkit.Maui 9.1.0**: Enhanced UI controls and behaviors
+- **Plugin.MauiMTAdmob 2.0.2**: Mobile advertising integration
+
+### Web Development
+- **Blazor Server**: Interactive server-side rendering
+- **Tailwind CSS**: Utility-first styling framework
+- **Facet 2.4.5**: Model mapping for form binding
+
+### Database & Storage
+- **SQL Server**: Containerized database via Aspire
+- **JSON Columns**: EF Core value converters for localized text
+- **Data Volumes**: Persistent storage for SQL Server and Ollama
 
 ## 🏗️ Architecture Principles
 
 ### .NET Aspire Orchestration
 - **AppHost Project**: `RecipeApp.AppHost` orchestrates all services via `Program.cs`
-- **SQL Server Container**: Managed by Aspire with automatic service discovery
+- **SQL Server Container**: Managed by Aspire with automatic service discovery and data volumes
+- **Ollama Integration**: Local AI service running on port 56772 with gpt-oss:20b model for recipe analysis
 - **Database Management**: `recipesdb` database created and managed through Aspire
 - **Service References**: WebApp references ApiService for HTTP communication
-- **Service Defaults**: Shared configuration in `RecipeApp.ServiceDefaults`
+- **Service Defaults**: Shared configuration in `RecipeApp.ServiceDefaults` with OpenTelemetry and health checks
 - **Run Command**: Always use `dotnet run --project RecipeApp.AppHost` for development
 
-### Shared Models Architecture
+### Enhanced Models Architecture
 - **RecipeApp.Models**: Centralized class library containing all data models
 - **Cross-Project Consistency**: Single source of truth for Recipe, Category, and RecipeLocalizedText
-- **Enhanced Models**: Models include validation attributes and helper properties for different usage contexts
+- **Enhanced Models**: Models include comprehensive validation attributes, constructors, and helper methods
+- **Implicit Conversions**: RecipeLocalizedText supports implicit string conversions for ease of use
 - **Project References**: All projects reference RecipeApp.Models for consistent data structures
 - **No Model Duplication**: Models are maintained in one location and shared across all applications
+- **Equality & Hashing**: Proper equality comparison and hash code generation implemented
 
 ### Multi-Language Data Model
 The **core innovation** is `RecipeLocalizedText` class for seamless bilingual support:
 
 ```csharp
+/// <summary>
+/// Represents localized text content supporting both English and Vietnamese languages.
+/// This is the core model for multi-language support across the Cookify application.
+/// </summary>
 public class RecipeLocalizedText
 {
+    [Required(ErrorMessage = "English text is required")]
+    [StringLength(1000, ErrorMessage = "English text cannot exceed 1000 characters")]
     public string English { get; set; } = string.Empty;
-    public string Vietnamese { get; set; } = string.Empty;
     
-    public string GetLocalizedText(string languageCode) => 
-        languageCode?.ToLower() switch
+    [StringLength(1000, ErrorMessage = "Vietnamese text cannot exceed 1000 characters")]
+    public string Vietnamese { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets the localized text based on the provided language code.
+    /// Defaults to English if the language code is unknown or if the specified language text is null/empty.
+    /// </summary>
+    /// <param name="languageCode">The language code (e.g., "en" for English, "vi" for Vietnamese)</param>
+    /// <returns>The localized text in the specified language</returns>
+    public string GetLocalizedText(string languageCode)
+    {
+        return languageCode?.ToLower() switch
         {
             "vi" => !string.IsNullOrWhiteSpace(Vietnamese) ? Vietnamese : English,
             "en" or _ => English
         };
+    }
+
+    // Constructors, implicit conversions, equality, and other utility methods included
 }
 ```
 
@@ -59,6 +112,15 @@ public class RecipeLocalizedText
 - **Seeding**: `DatabaseSeeder.cs` populates sample Vietnamese recipes on startup
 - **Migration Handling**: Smart migration logic handles switching from EnsureCreated to migrations
 
+### AI Integration Architecture
+- **Ollama Service**: Local AI service integrated via Aspire on port 56772
+- **Model**: Uses gpt-oss:20b model for recipe analysis
+- **Semantic Kernel**: Microsoft Semantic Kernel integration for AI operations
+- **OCR Capabilities**: Tesseract OCR with Vietnamese language support
+- **Image Processing**: Upload and analyze recipe images with AI-powered content extraction
+- **Timeout Handling**: 60-minute timeout policy for AI operations to handle complex processing
+- **Service Pattern**: `IRecipeAIAnalysisService` with Ollama-specific implementation
+
 ## 🔧 Development Guidelines
 
 ### When Working with Models
@@ -71,13 +133,15 @@ public class RecipeLocalizedText
 - **Validation**: Models include comprehensive validation attributes for all usage contexts
 
 ### API Development Patterns
-- **Controllers**: Follow existing patterns in `CategoriesController` and `RecipesController`
-- **Service Layer**: Use service layer pattern (`IRecipeService`, `ICategoryService`) for business logic
+- **Controllers**: Follow existing patterns in `CategoriesController`, `RecipesController`, and `ImageAIController`
+- **Service Layer**: Use service layer pattern for business logic (Recipe, Category, Image Processing, AI Analysis services)
 - **Export Endpoint**: `GET /api/recipes/export` returns JSON with embedded Category data for mobile app
+- **AI Analysis Endpoint**: `POST /api/imageai/analyse` accepts images and returns structured recipe data
 - **Include Strategy**: Always `.Include(r => r.Category)` when fetching recipes
 - **Return Types**: Use appropriate HTTP status codes (200, 201, 204, 404)
 - **Error Handling**: Wrap operations in try-catch with proper status codes and error messages
-- **JSON Serialization**: Uses System.Text.Json with PropertyNameCaseInsensitive option
+- **JSON Serialization**: Uses System.Text.Json with PropertyNameCaseInsensitive and ReferenceHandler.IgnoreCycles
+- **Timeout Management**: Request timeout policies for long-running AI operations
 
 ### Blazor Frontend Conventions
 - **Tailwind CSS**: All styling uses Tailwind utility classes
@@ -98,6 +162,7 @@ public class RecipeLocalizedText
 - **Localization**: `LanguageService` manages current language state with event notifications
 - **Ad Integration**: Uses MTAdmob plugin with interstitial ads on category navigation (every 3rd click)
 - **Offline-First**: App works entirely from local JSON data, no direct API calls
+- **Community Toolkit**: Leverages CommunityToolkit.Maui for enhanced UI controls and behaviors
 
 ## 📁 Key File Locations
 
@@ -114,10 +179,16 @@ RecipeApp.ApiService/
 │   └── DatabaseSeeder.cs         # Sample data seeding
 ├── Controllers/
 │   ├── RecipesController.cs      # CRUD + Export endpoint
-│   └── CategoriesController.cs   # Category management
-└── Services/
-    ├── CategoryService.cs        # Business logic for categories
-    └── ...                       # Additional service implementations
+│   ├── CategoriesController.cs   # Category management
+│   └── ImageAIController.cs      # AI image analysis endpoint
+├── Services/
+│   ├── CategoryService.cs        # Business logic for categories
+│   ├── RecipeService.cs          # Business logic for recipes
+│   ├── ImageProcessingService.cs # OCR and image processing
+│   ├── IRecipeAIAnalysisService.cs    # AI analysis interface
+│   └── OllamaRecipeAIAnalysisService.cs # Ollama AI implementation
+└── tessdata/
+    └── vie.traineddata           # Vietnamese OCR language data
 
 RecipePortal.WebApp/
 ├── Components/Pages/
@@ -132,21 +203,32 @@ RecipePortal.WebApp/
 
 RecipeApp.Mobile/
 ├── ViewModels/
+│   ├── BaseViewModel.cs          # Base class with CommunityToolkit.Mvvm
 │   ├── MainViewModel.cs          # Recipe list logic with CommunityToolkit.Mvvm
-│   └── RecipeDetailViewModel.cs  # Recipe details logic
+│   ├── RecipeDetailViewModel.cs  # Recipe details logic
+│   ├── CategoryRecipesViewModel.cs # Category-specific recipes
+│   ├── AppShellViewModel.cs      # Shell navigation logic
+│   └── LanguageSelectionPopupViewModel.cs # Language selection
 ├── Services/
 │   ├── RecipeDataService.cs      # JSON data loading from embedded files
+│   ├── CategoryDataService.cs    # Category data management
 │   ├── LanguageService.cs        # Language management with events
+│   ├── LanguagePreferenceService.cs # Language preference persistence
 │   └── AdService.cs              # MTAdmob integration for interstitial ads
-└── Pages/
-    ├── MainPage.xaml             # Recipe list UI
-    └── RecipeDetailPage.xaml     # Recipe detail UI
+├── Pages/
+│   ├── MainPage.xaml             # Recipe list UI
+│   ├── RecipeDetailPage.xaml     # Recipe detail UI
+│   └── CategoryRecipesPage.xaml  # Category-specific recipes UI
+└── Components/
+    └── Popups/
+        └── LanguageSelectionPopup.xaml # Language selection popup
 ```
 
 ### Configuration Files
-- `RecipeApp.AppHost/Program.cs` - Aspire orchestration
-- `RecipeApp.Mobile/MauiProgram.cs` - DI container setup
-- `RecipePortal.WebApp/Program.cs` - Blazor configuration
+- `RecipeApp.AppHost/Program.cs` - Aspire orchestration with Ollama and SQL Server
+- `RecipeApp.Mobile/MauiProgram.cs` - DI container setup with CommunityToolkit
+- `RecipePortal.WebApp/Program.cs` - Blazor configuration with Facet mapping
+- `RecipeApp.ServiceDefaults/Extensions.cs` - Shared service configuration
 
 ## 🚨 Common Patterns & Anti-Patterns
 
@@ -154,9 +236,12 @@ RecipeApp.Mobile/
 - Use `RecipeLocalizedText` for all user content
 - Include navigation properties when querying (`Include(r => r.Category)`)
 - Register services properly in each project's Program.cs/MauiProgram.cs
-- Follow MVVM pattern strictly in MAUI app
+- Follow MVVM pattern strictly in MAUI app with CommunityToolkit.Mvvm
 - Use Tailwind CSS classes for styling in Blazor
 - Handle loading states and errors gracefully
+- Use `[ObservableProperty]` and `[RelayCommand]` attributes in ViewModels
+- Implement proper timeout handling for AI operations
+- Use service layer pattern for business logic separation
 
 ### ❌ DON'T - Avoid These Mistakes
 - Don't use plain strings for user-facing content
@@ -164,6 +249,9 @@ RecipeApp.Mobile/
 - Don't break the JSON schema for mobile app export
 - Don't mix UI logic into ViewModels (use Commands)
 - Don't hardcode language strings (use .resx for static text)
+- Don't manually implement ICommand or INotifyPropertyChanged (use CommunityToolkit)
+- Don't bypass timeout policies for AI operations
+- Don't duplicate models across projects
 
 ## 🔄 Typical Development Workflows
 
@@ -182,10 +270,17 @@ RecipeApp.Mobile/
 4. Update mobile app if endpoint affects mobile data flow
 
 ### Modifying Mobile UI
-1. Update ViewModels first (data binding properties)
+1. Update ViewModels first (data binding properties with `[ObservableProperty]`)
 2. Modify XAML pages with proper data binding
 3. Register new ViewModels/Pages in `MauiProgram.cs` if added
 4. Test language switching functionality
+
+### Adding AI Features
+1. Create service interface in `RecipeApp.ApiService/Services/`
+2. Implement service with proper error handling and timeout management
+3. Register service in `Program.cs` with appropriate lifetime
+4. Add controller endpoints with `[RequestTimeout]` attributes
+5. Test with various input scenarios and timeout conditions
 
 ## 🧩 Integration Points
 
@@ -283,7 +378,9 @@ dotnet run --project RecipeApp.AppHost
 - **API Calls**: Confirm Aspire service discovery is working properly
 - **SQL Server Connection**: Ensure SQL Server container is running and retry logic is configured
 - **Shared Models**: Ensure all projects reference RecipeApp.Models correctly
+- **AI Operations**: Check Ollama service is running and timeout policies are configured
+- **OCR Processing**: Verify tessdata folder contains Vietnamese language files
 
 ---
 
-**Remember**: This is a complete, working solution. Study the existing patterns thoroughly before making changes. The multi-language architecture using `RecipeLocalizedText` is the key innovation that makes this system work seamlessly across all platforms.
+**Remember**: This is a complete, working solution with advanced AI capabilities for recipe analysis from images. Study the existing patterns thoroughly before making changes. The multi-language architecture using `RecipeLocalizedText` is the key innovation that makes this system work seamlessly across all platforms.

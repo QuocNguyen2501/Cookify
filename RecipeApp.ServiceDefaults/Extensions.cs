@@ -24,11 +24,11 @@ public static class Extensions
 
         builder.Services.ConfigureHttpClientDefaults(http =>
         {
-            // Turn on resilience by default
-            http.AddStandardResilienceHandler();
-
             // Turn on service discovery by default
             http.AddServiceDiscovery();
+            
+            // Skip standard resilience handler to avoid timeout issues for AI operations
+            // http.AddStandardResilienceHandler();
         });
 
         return builder;

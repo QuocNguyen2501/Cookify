@@ -1,5 +1,6 @@
 using RecipePortal.WebApp;
 using RecipePortal.WebApp.Components;
+using RecipePortal.WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.Services.AddHttpClient<WeatherApiClient>(client =>
 builder.Services.AddHttpClient("ApiClient", client =>
 {
     client.BaseAddress = new("https+http://apiservice");
+    // Set timeout to 65 minutes to be slightly longer than API timeout (60 minutes)
+    client.Timeout = TimeSpan.FromMinutes(65);
 });
 
 // Register the named client as the default HttpClient for direct injection
@@ -31,6 +34,9 @@ builder.Services.AddScoped(sp =>
     var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
     return httpClientFactory.CreateClient("ApiClient");
 });
+
+// Register Recipe Form Service
+builder.Services.AddScoped<IRecipeFormService, RecipeFormService>();
 
 var app = builder.Build();
 

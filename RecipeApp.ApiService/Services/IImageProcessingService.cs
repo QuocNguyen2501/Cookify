@@ -27,4 +27,11 @@ public interface IImageProcessingService
     /// <param name="imageBytes">The image as byte array</param>
     /// <returns>Extracted text content from the image</returns>
     string ExtractTextFromImage(byte[] imageBytes);
+
+    /// <summary>
+    /// Applies image filtering using OpenCV to enhance OCR accuracy
+    /// </summary>
+    /// <param name="imageBytes">The image as byte array</param>
+    /// <returns>Processed image bytes after filtering</returns>
+    byte[] ImageFilterByOpenCV(byte[] imageBytes);
 }

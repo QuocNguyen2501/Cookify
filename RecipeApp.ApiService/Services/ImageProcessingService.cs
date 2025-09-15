@@ -1,3 +1,4 @@
+using OpenCvSharp;
 using Tesseract;
 
 namespace RecipeApp.ApiService.Services;
@@ -84,5 +85,14 @@ public class ImageProcessingService : IImageProcessingService
         {
             throw new InvalidOperationException($"Failed to extract text from image: {ex.Message}", ex);
         }
+    }
+
+    public byte[] ImageFilterByOpenCV(byte[] imageBytes)
+    {
+        var img = Cv2.ImDecode(imageBytes, ImreadModes.Grayscale);
+        Cv2.Threshold(img,img,0,255,ThresholdTypes.Binary | ThresholdTypes.Otsu);
+        var resized = new Mat();
+        Cv2.Resize(img, resized, new Size(img.Width * 1.5, img.Height * 1.5), interpolation: InterpolationFlags.Cubic);
+        return resized.ToBytes(); // Return the processed image bytes
     }
 }
